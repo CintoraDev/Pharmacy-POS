@@ -9,25 +9,26 @@
 
 <div class="p-4">
     <div class="div d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Usuarios</h4>
+        <h4 class="text-white">Clientes</h4>
         <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
             data-bs-target="#modalUser">
-            <i class="bi bi-person-plus me-1"></i> Agregar Usuario
+            <i class="bi bi-person-plus me-1"></i> Agregar Cliente
         </button>
     </div>
 
     <div class="mb-3">
         <input type=" text" class="form-control" style="background-color: #16213e;
             border: 1px solid #2a2a4a;
-            color: white;" placeholder="Buscar usuario...">
+            color: white;" placeholder="Buscar Cliente...">
     </div>
 
     <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Nombre</th>
-                <th>Correo</th>
-                <th>Rol</th>
+                <th>RFC</th>
+                <th>Fecha De Nacimiento</th>
+                <th>Puntos</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -35,8 +36,9 @@
         <tbody>
             <tr>
                 <td>Carlos Cintora</td>
-                <td>carloscintora66@gmail.com</td>
-                <td><span class="badge" style="background-color: #7F77DD;">Admin</span></td>
+                <td>CIGC05061</td>
+                <td>14/06/2005</td>
+                <td>90</td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -45,8 +47,9 @@
 
             <tr>
                 <td>Alexis Gonzalez</td>
-                <td>alexisglex9889@gmail.com</td>
-                <td><span class="badge" style="background-color: rgb(8, 90, 19);">Gerente</span></td>
+                <td>ALGC05731</td>
+                <td>08/09/1998</td>
+                <td>5</td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -60,8 +63,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar Usuario</h5>
+                <div class="modal-header fade">
+                    <h5 class="modal-title">Agregar Cliente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -71,20 +74,12 @@
                             <input class="form-control" type="text" name="nombre">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Correo</label>
-                            <input class="form-control" type="email" name="correo">
+                            <label class="form-label">RFC</label>
+                            <input class="form-control" type="text" name="rfc">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Rol</label>
-                            <select name="rol" class="form-select">
-                                <option value="admin">Admin</option>
-                                <option value="manager">Encargado</option>
-                                <option value="supervisor">Gerente</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input class="form-control" type="password" name="password">
+                            <label class="form-label">Fecha De Nacimiento</label>
+                            <input class="form-control" type="date" name="birthdate">
                         </div>
                     </form>
                 </div>
