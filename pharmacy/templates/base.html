@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Farmacia CUCEI</title>
+    <style>
+        .sidebar a {
+            text-decoration: none;
+            color: #9090b0;
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background-color: #1a1a2e;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="d-flex min-vh-100">
+
+
+    <div style="width: 250px; background-color: #0f0f1a;" class="p-3 sidebar">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-capsule" style="color: #7F77DD; font-size: 1.5rem;"></i>
+            <span style="color: white; font-weight: bold;">Farmacia CUCEI</span>
+        </div>
+        <hr style="color: #565687;;">
+
+
+        <ul class="list-unstyled">
+            <li>
+                <a href="/dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            </li>
+
+            <li> <a href="/users">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+            </li>
+
+            <li>
+                <a href="/medications">
+                    <i class="bi bi-capsule"></i> Medicamentos
+                </a>
+            </li>
+
+            <li>
+                <a href="/customers">
+                    <i class="bi bi-person"></i> Clientes
+                </a>
+            </li>
+
+            <li>
+                <a href="/sales">
+                    <i class="bi bi-cart"></i> Ventas
+                </a>
+            </li>
+
+            <li>
+                <a href="/purchases">
+                    <i class="bi bi-bag"></i> Compras
+                </a>
+            </li>
+
+            <li>
+                <a href="/reports">
+                    <i class="bi bi-bar-chart"></i> Reportes
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="flex-grow-1" style="background-color: #0f0f1a;">
+
+        <div class="d-flex justify-content-between align-items-center p-3"
+            style="background-color: #0f0f1a; border-bottom: 1px solid #2a2a4a; color: aliceblue;">
+
+
+            <div class="d-flex align-items-center gap-2" style="color: #9090b0; font-size: 0.9rem;">
+                <i class="bi bi-calendar3"></i> 20/04/2026
+                <i class="bi bi-clock ms-2"></i> 10:30
+            </div>
+
+
+            <div class="d-flex align-items-center gap-3">
+                <span style="color: white;">Carlos Cintora</span>
+                <span class="badge" style="background-color: #7F77DD;">Admin</span>
+                <a href="/logout" style="color: #f09595; text-decoration: none;">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                </a>
+            </div>
+
+        </div>
+
+
+        <main class="p-4">
+            {% block contenido %}{% endblock %}
+        </main>
+
+    </div>
+
+</body>
+
+</html>
