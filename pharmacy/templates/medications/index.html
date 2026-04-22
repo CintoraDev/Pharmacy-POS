@@ -9,36 +9,36 @@
 
 <div class="p-4">
     <div class="div d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Clientes</h4>
+        <h4 class="text-white">Medicamentos</h4>
         <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
             data-bs-target="#modalUser">
-            <i class="bi bi-person-plus me-1"></i> Agregar Cliente
+            <i class="bi bi-square-plus me-1"></i> Agregar Medicamento
         </button>
     </div>
 
     <div class="mb-3">
         <input type=" text" class="form-control" style="background-color: #16213e;
             border: 1px solid #2a2a4a;
-            color: white;" placeholder="Buscar Cliente...">
+            color: white;" placeholder="Buscar Medicamento...">
     </div>
 
     <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Nombre</th>
-                <th>RFC</th>
-                <th>Fecha De Nacimiento</th>
-                <th>Puntos</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Clasificación</th>
                 <th>Acciones</th>
             </tr>
         </thead>
 
         <tbody>
             <tr>
-                <td>Carlos Cintora</td>
-                <td>CIGC05061</td>
-                <td>14/06/2005</td>
-                <td>90</td>
+                <td>Ibuprofeno</td>
+                <td>10.50</td>
+                <td>20</td>
+                <td>analgésico</td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -46,10 +46,10 @@
             </tr>
 
             <tr>
-                <td>Alexis Gonzalez</td>
-                <td>ALGC05731</td>
-                <td>08/09/1998</td>
-                <td>5</td>
+                <td>Paracetamol</td>
+                <td>16.80</td>
+                <td>67</td>
+                <td>analgésico</td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -59,12 +59,12 @@
     </table>
 
 
-    <div class="modal" id="modalUser">
+    <div class="modal fade" id="modalUser">
         <div class="modal-dialog">
             <div class="modal-content">
 
-                <div class="modal-header fade">
-                    <h5 class="modal-title">Agregar Cliente</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Medicamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -74,16 +74,21 @@
                             <input class="form-control" type="text" name="name">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">RFC</label>
-                            <input class="form-control" type="text" name="rfc">
+                            <label class="form-label">Precio</label>
+                            <input class="form-control" type="number" name="price" step="0.01">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Fecha De Nacimiento</label>
-                            <input class="form-control" type="date" name="birthdate">
+                            <label class="form-label">Stock</label>
+                            <input class="form-control" type="number" name="stock">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Puntos</label>
-                            <input class="form-control" type="number" name="points">
+                            <label class="form-label">Clasificación</label>
+                            <select name="classification" class="form-select">
+                                <option value="analgesic">Analgésico</option>
+                                <option value="anti_inflammatory">Antiinflamatorio</option>
+                                <option value="antibiotic">Antibiótico</option>
+                                <option value="other">Otro</option>
+                            </select>
                         </div>
                     </form>
                 </div>
