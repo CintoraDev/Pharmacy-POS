@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+<style>
+    .form-control::placeholder {
+        color: #6b6b8a;
+    }
+</style>
+
+<div class="p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white">Compras</h4>
+        <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
+            data-bs-target="#modalPurchase">
+            <i class="bi bi-bag-plus me-1"></i> Nueva Compra
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <input type=" text" class="form-control" style="background-color: #16213e;
+            border: 1px solid #2a2a4a;
+            color: white;" placeholder="Buscar Compra...">
+    </div>
+
+    <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
+        <thead style="border-bottom: 2px solid #7F77DD;">
+            <tr>
+                <th>Proveedor</th>
+                <th>Fecha De Compra</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Farmacias Guadalajara</td>
+                <td>10/04/2026</td>
+                <td>1500.00</td>
+                <td>
+                    <button class="btn btn-sm btn-warning">Editar</button>
+                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Farmacia Similares</td>
+                <td>10/04/2026</td>
+                <td>1500.00</td>
+                <td>
+                    <button class="btn btn-sm btn-warning">Editar</button>
+                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div class="modal fade" id="modalPurchase">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Nueva Compra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form-purchases">
+                        <div class="mb-3">
+                            <label class="form-label">Proveedor</label>
+                            <input class="form-control" type="text" name="provider">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha De Compra</label>
+                            <input class="form-control" type="date" name="date">
+                        </div>
+
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <select class="form-select" name="medicine">
+                                <option value="" disabled selected>Medicamento</option>
+                                <option value="paracetamol">Paracetamol</option>
+                                <option value="ibuprofeno">Ibuprofeno</option>
+                                <option value="amoxicilina">Amoxicilina</option>
+                            </select>
+                            <input type="number" class="form-control" name="quantity" placeholder="Cantidad"
+                                style="width: 120px;" value="">
+                            <input type="number" class="form-control" name="price" placeholder="Precio" step="0.01"
+                                style="width: 120px;" value="">
+                            <button type="button" class="btn btn-sm"
+                                style="background-color: #7F77DD; color: white; white-space: nowrap;">
+                                + Agregar
+                            </button>
+                        </div>
+
+
+
+                        <div>
+                            <table class="table table-hover table-dark ms-auto"
+                                style="border: 2px solid #2a2a4a; border-radius: 8px;">
+                                <thead style="border-bottom: 2px solid #7F77DD;">
+                                    <tr>
+                                        <th>Medicamento</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Subtotal</th>
+                                        <th>Eliminar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Paracetamol</td>
+                                        <td>10</td>
+                                        <td>16.80</td>
+                                        <td>168.00</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="mb-3">
+                                <label class="form-label">Total: $1000.00</label>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                    <button class="btn" style="background-color: #7F77DD; color: white;"
+                        form="form-purchases">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+{% endblock %}
