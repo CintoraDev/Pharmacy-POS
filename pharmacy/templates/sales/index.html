@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block contenido %}
+<div class="p-4">
+    <h4 class="text-white mb-3">Ventas</h4>
+    <div class="row g-3">
+
+        <!-- IZQUIERDA -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <input class="form-control mb-3" type="text" placeholder="Buscar producto...">
+                <p class="text-white">Resultados:</p>
+                <table class="table table-hover table-dark">
+                    <tbody>
+                        <tr>
+                            <td>Paracetamol</td>
+                            <td>$16</td>
+                            <td>Stock: 20</td>
+                            <td><button class="btn btn-sm btn-primary-custom">+ Agregar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DERECHA -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <label class="form-label mb-0">Cliente</label>
+                    <select name="client" class="form-select">
+                        <option disabled selected>Seleccionar</option>
+                        <option value="client1">Carlos Cintora</option>
+                        <option value="client2">Alexis Gonzalez</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
+                        data-bs-target="#modal-customer">
+
+                        <i class="bi bi-person-plus"></i>
+                    </button>
+                </div>
+
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Paracetamol</td>
+                            <td>
+                                <div class="d-flex align-items-center ">
+                                    <button class="btn btn-sm btn-outline-secondary">-</button>
+                                    <span class="text-white px-2">1</span>
+                                    <button class="btn btn-sm btn-outline-secondary">+</button>
+                                </div>
+                            </td>
+                            <td>$16.00</td>
+                            <td><button class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div class="p-2 mt-2 rounded" style="background-color: #0f0f1a;">
+                    <div class="d-flex justify-content-between text-white">
+                        <span>Subtotal:</span><span>$35.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white">
+                        <span>Descuento:</span><span>$0.00</span>
+                    </div>
+                    <hr style="border-color: #2a2a4a;">
+                    <div class="d-flex justify-content-between text-white">
+                        <strong>Total:</strong><strong>$35.00</strong>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary-custom w-100 mt-2">
+                    Finalizar Venta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% include 'customers/modal_add.html' %}
+
+</div>
+{% endblock %}
