@@ -1,0 +1,30 @@
+<div class="modal fade" id="modal-customer">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form-customer">
+                    <div class="mb-3">
+                        <label class="form-label" for="cust-name">Nombre</label>
+                        <input class="form-control" type="text" name="name" id="cust-name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="cust-rfc">RFC</label>
+                        <input class="form-control" type="text" name="rfc" id="cust-rfc">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="cust-birthdate">Fecha De Nacimiento</label>
+                        <input class="form-control" type="date" name="birthdate" id="cust-birthdate">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                <button class="btn btn-primary-custom" form="form-customer">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
