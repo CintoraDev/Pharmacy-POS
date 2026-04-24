@@ -1,28 +1,20 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<style>
-    .form-control::placeholder {
-        color: #6b6b8a;
-    }
-</style>
-
 <div class="p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="text-white">Compras</h4>
-        <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
-            data-bs-target="#modalPurchase">
+        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal"
+            data-bs-target="#modal-purchase">
             <i class="bi bi-bag-plus me-1"></i> Nueva Compra
         </button>
     </div>
 
     <div class="mb-3">
-        <input type=" text" class="form-control" style="background-color: #16213e;
-            border: 1px solid #2a2a4a;
-            color: white;" placeholder="Buscar Compra...">
+        <input type="text" class="form-control" placeholder="Buscar Compra...">
     </div>
 
-    <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
+    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Proveedor</th>
@@ -56,7 +48,7 @@
     </table>
 
 
-    <div class="modal fade" id="modalPurchase">
+    <div class="modal fade" id="modal-purchase">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
@@ -65,14 +57,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" id="form-purchases">
+                    <form method="POST" id="form-purchase">
                         <div class="mb-3">
-                            <label class="form-label">Proveedor</label>
-                            <input class="form-control" type="text" name="provider">
+                            <label class="form-label" for="pur-provider">Proveedor</label>
+                            <input class="form-control" type="text" name="provider" id="pur-provider">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Fecha De Compra</label>
-                            <input class="form-control" type="date" name="date">
+                            <label class="form-label" for="pur-date">Fecha De Compra</label>
+                            <input class="form-control" type="date" name="date" id="pur-date">
                         </div>
 
                         <div class="mb-3 d-flex align-items-center gap-3">
@@ -86,8 +78,7 @@
                                 style="width: 120px;" value="">
                             <input type="number" class="form-control" name="price" placeholder="Precio" step="0.01"
                                 style="width: 120px;" value="">
-                            <button type="button" class="btn btn-sm"
-                                style="background-color: #7F77DD; color: white; white-space: nowrap;">
+                            <button type="button" class="btn btn-sm btn-primary-custom" style="white-space: nowrap;">
                                 + Agregar
                             </button>
                         </div>
@@ -95,7 +86,7 @@
 
 
                         <div>
-                            <table class="table table-hover table-dark ms-auto"
+                            <table class="table table-hover table-dark"
                                 style="border: 2px solid #2a2a4a; border-radius: 8px;">
                                 <thead style="border-bottom: 2px solid #7F77DD;">
                                     <tr>
@@ -130,8 +121,7 @@
                 </div>
                 <div class="modal-footer">
                     <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn" style="background-color: #7F77DD; color: white;"
-                        form="form-purchases">Guardar</button>
+                    <button class="btn btn-primary-custom" form="form-purchase">Guardar</button>
                 </div>
             </div>
         </div>

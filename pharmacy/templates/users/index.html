@@ -1,28 +1,20 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<style>
-    .form-control::placeholder {
-        color: #6b6b8a;
-    }
-</style>
-
 <div class="p-4">
-    <div class="div d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="text-white">Usuarios</h4>
-        <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
-            data-bs-target="#modalUser">
+        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-user">
             <i class="bi bi-person-plus me-1"></i> Agregar Usuario
         </button>
     </div>
 
     <div class="mb-3">
-        <input type=" text" class="form-control" style="background-color: #16213e;
-            border: 1px solid #2a2a4a;
-            color: white;" placeholder="Buscar usuario...">
+        <input type="text" class="form-control" placeholder="Buscar usuario...">
     </div>
 
-    <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
+    <table class="table table-hover  ms-aut"
+        style="background-color: #6f42c1;color: white; border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Nombre</th>
@@ -56,7 +48,7 @@
     </table>
 
 
-    <div class="modal" id="modalUser">
+    <div class="modal fade" id="modal-user">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -67,31 +59,30 @@
                 <div class="modal-body">
                     <form method="POST" id="form-user">
                         <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input class="form-control" type="text" name="nombre">
+                            <label class="form-label" for="user-name">Nombre</label>
+                            <input class="form-control" type="text" name="name" id="user-name">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Correo</label>
-                            <input class="form-control" type="email" name="correo">
+                            <label class="form-label" for="user-email">Correo</label>
+                            <input class="form-control" type="email" name="email" id="user-email">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Rol</label>
-                            <select name="rol" class="form-select">
+                            <label class="form-label" for="user-role">Rol</label>
+                            <select name="role" class="form-select" id="user-role">
                                 <option value="admin">Admin</option>
                                 <option value="manager">Encargado</option>
                                 <option value="supervisor">Gerente</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input class="form-control" type="password" name="password">
+                            <label class="form-label" for="user-password">Contraseña</label>
+                            <input class="form-control" type="password" name="password" id="user-password">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn" style="background-color: #7F77DD; color: white;"
-                        form="form-user">Guardar</button>
+                    <button class="btn btn-primary-custom" form="form-user">Guardar</button>
                 </div>
             </div>
         </div>

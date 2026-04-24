@@ -1,28 +1,19 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<style>
-    .form-control::placeholder {
-        color: #6b6b8a;
-    }
-</style>
-
 <div class="p-4">
-    <div class="div d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="text-white">Medicamentos</h4>
-        <button class="btn btn-sm px-5, py-2" style="background-color: #7F77DD; color: white;" data-bs-toggle="modal"
-            data-bs-target="#modalUser">
+        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-add">
             <i class="bi bi-square-plus me-1"></i> Agregar Medicamento
         </button>
     </div>
 
     <div class="mb-3">
-        <input type=" text" class="form-control" style="background-color: #16213e;
-            border: 1px solid #2a2a4a;
-            color: white;" placeholder="Buscar Medicamento...">
+        <input type="text" class="form-control" placeholder="Buscar Medicamento...">
     </div>
 
-    <table class="table table-hover table-dark ms-aut" style="border: 2px solid #2a2a4a; border-radius: 8px;">
+    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Nombre</th>
@@ -59,7 +50,7 @@
     </table>
 
 
-    <div class="modal fade" id="modalUser">
+    <div class="modal fade" id="modal-add">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -68,22 +59,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" id="form-user">
+                    <form method="POST" id="form-medication">
                         <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input class="form-control" type="text" name="name">
+                            <label class="form-label" for="med-name">Nombre</label>
+                            <input class="form-control" type="text" name="name" id="med-name">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Precio</label>
-                            <input class="form-control" type="number" name="price" step="0.01">
+                            <label class="form-label" for="med-price">Precio</label>
+                            <input class="form-control" type="number" name="price" step="0.01" id="med-price">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Stock</label>
-                            <input class="form-control" type="number" name="stock">
+                            <label class="form-label" for="med-stock">Stock</label>
+                            <input class="form-control" type="number" name="stock" id="med-stock">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Clasificación</label>
-                            <select name="classification" class="form-select">
+                            <label class="form-label" for="med-classification">Clasificación</label>
+                            <select name="classification" class="form-select" id="med-classification">
                                 <option value="analgesic">Analgésico</option>
                                 <option value="anti_inflammatory">Antiinflamatorio</option>
                                 <option value="antibiotic">Antibiótico</option>
@@ -94,8 +85,7 @@
                 </div>
                 <div class="modal-footer">
                     <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn" style="background-color: #7F77DD; color: white;"
-                        form="form-user">Guardar</button>
+                    <button class="btn btn-primary-custom" form="form-medication">Guardar</button>
                 </div>
             </div>
         </div>
