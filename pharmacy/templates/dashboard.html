@@ -2,58 +2,64 @@
 
 {% block contenido %}
 
-
 <div class="p-4">
     <h4 class="text-white mb-4">Dashboard</h4>
 
-    <div class="row g-3">
+    <div class="row g-3 justify-content-center">
+
+        {% if current_user.rol in ['admin', 'gerente'] %}
         <div class="col-md-4">
-            <a href="/users" style="text-decoration: none;">
+            <a href="{{ url_for('users.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-people icon-sidebar"></i> Usuarios
                 </div>
             </a>
         </div>
+        {% endif %}
+
         <div class="col-md-4">
-            <a href="/medications" style="text-decoration: none;">
+            <a href="{{ url_for('medications.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-capsule icon-sidebar"></i> Medicamentos
                 </div>
             </a>
         </div>
+
         <div class="col-md-4">
-            <a href="/customers" style="text-decoration: none;">
+            <a href="{{ url_for('customers.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-person icon-sidebar"></i> Clientes
                 </div>
             </a>
         </div>
-    </div>
 
-    <div class="row g-3 mt-4">
         <div class="col-md-4">
-            <a href="/sales" style="text-decoration: none;">
+            <a href="{{ url_for('sales.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-cart icon-sidebar"></i> Ventas
                 </div>
             </a>
         </div>
+
+        {% if current_user.rol in ['admin', 'gerente'] %}
         <div class="col-md-4">
-            <a href="/purchases" style="text-decoration: none;">
+            <a href="{{ url_for('purchases.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-bag icon-sidebar"></i> Compras
                 </div>
             </a>
         </div>
+
         <div class="col-md-4">
-            <a href="/reports" style="text-decoration: none;">
+            <a href="{{ url_for('reports.index') }}" style="text-decoration: none;">
                 <div class="card p-3">
                     <i class="bi bi-bar-chart icon-sidebar"></i> Reportes
                 </div>
             </a>
         </div>
-    </div>
+        {% endif %}
 
+    </div>
 </div>
 
 {% endblock %}
