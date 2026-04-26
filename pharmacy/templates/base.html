@@ -98,6 +98,18 @@
             font-size: 2rem;
             color: #7F77DD;
         }
+
+        .badge-admin {
+            background-color: #7F77DD;
+        }
+
+        .badge-gerente {
+            background-color: #085a13;
+        }
+
+        .badge-encargado {
+            background-color: #c47d0e;
+        }
     </style>
 </head>
 
@@ -174,7 +186,7 @@
 
             <div class="d-flex align-items-center gap-3">
                 <span style="color: white;">{{ current_user.name }}</span>
-                <span class="badge" style="background-color: #7F77DD;">{{ current_user.rol | capitalize }}</span>
+                <span class="badge badge-{{ current_user.rol }}">{{ current_user.rol | capitalize }}</span>
                 <a href="{{ url_for('auth.logout') }}" style="color: #f09595; text-decoration: none;">
                     <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
