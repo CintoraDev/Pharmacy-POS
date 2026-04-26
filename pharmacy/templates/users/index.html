@@ -25,25 +25,21 @@
         </thead>
 
         <tbody>
+            {% for user in users %}
             <tr>
-                <td>Carlos Cintora</td>
-                <td>carloscintora66@gmail.com</td>
-                <td><span class="badge" style="background-color: #7F77DD;">Admin</span></td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                    <span class="badge badge-{{ user.rol }}">{{ user.rol | capitalize }}</span>
+                </td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
                 </td>
             </tr>
+            {% endfor %}
 
-            <tr>
-                <td>Alexis Gonzalez</td>
-                <td>alexisglex9889@gmail.com</td>
-                <td><span class="badge" style="background-color: rgb(8, 90, 19);">Gerente</span></td>
-                <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                </td>
-            </tr>
+
         </tbody>
     </table>
 
