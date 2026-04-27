@@ -13,7 +13,7 @@
         <input type="text" class="form-control" placeholder="Buscar usuario...">
     </div>
 
-    <table class="table table-hover  ms-aut"
+    <table class="table table-hover ms-auto"
         style="background-color: #6f42c1;color: white; border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
@@ -33,7 +33,10 @@
                     <span class="badge badge-{{ user.rol }}">{{ user.rol | capitalize }}</span>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#modal-edit-{{ user.id }}">
+                        Editar
+                    </button>
 
                     <form action="{{url_for('users.desactivate', id = user.id)}}" method="POST">
                         <button class="btn btn-sm btn-danger">Eliminar</button>
@@ -41,10 +44,55 @@
                 </td>
             </tr>
             {% endfor %}
-
-
         </tbody>
     </table>
+
+    {% for user in users %}
+    <div class="modal fade" id="modal-edit-{{ user.id }}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('users.update', id = user.id) }}"
+                        id="form-edit-user-{{ user.id }}">
+                        <div class="mb-3">
+                            <label class="form-label" for="user-name-{{ user.id }}">Nombre</label>
+                            <input class="form-control" type="text" name="name" id="user-name-{{ user.id }}"
+                                value="{{ user.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="user-email-{{ user.id }}">Correo</label>
+                            <input class="form-control" type="email" name="email" id="user-email-{{ user.id }}"
+                                value="{{ user.email }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="user-rol-{{ user.id }}">Rol</label>
+                            <select name="rol" class="form-select" id="user-rol-{{ user.id }}">
+                                <option value="admin" {% if user.rol=='admin' %}selected{% endif %}>Admin
+                                </option>
+                                <option value="encargado" {% if user.rol=='encargado' %}selected{% endif %}>
+                                    Encargado</option>
+                                <option value="gerente" {% if user.rol=='gerente' %}selected{% endif %}>
+                                    Gerente</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="user-password-{{ user.id }}">Contraseña</label>
+                            <input class="form-control" type="password" name="password" id="user-password-{{ user.id }}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                    <button class="btn btn-primary-custom" form="form-edit-user-{{ user.id }}">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
 
     <div class="modal fade" id="modal-user">
