@@ -2,16 +2,19 @@ from flask import Blueprint, render_template, redirect, url_for, flash , request
 from flask_login import login_required
 from models import User, db
 from werkzeug.security import generate_password_hash
+from utils import role_required
 
 users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/users')
+@role_required('admin', 'gerente')
 @login_required
 def index():
     users = User.query.filter_by(status=True).all()
     return render_template('users/index.html', users = users)
 
 @users_bp.route('/users/create', methods=['POST'])
+@role_required('admin', 'gerente')
 @login_required
 def create():
     name = request.form.get('name')
@@ -41,6 +44,7 @@ def create():
 
 
 @users_bp.route('/users/desactivate/<int:id>', methods=['POST'])
+@role_required('admin', 'gerente')
 @login_required
 def desactivate(id):
     user = User.query.get_or_404(id)
@@ -53,6 +57,7 @@ def desactivate(id):
     
 
 @users_bp.route('/users/update/<int:id>', methods=['POST'])
+@role_required('admin', 'gerente')
 @login_required
 def update(id):
     user = User.query.get_or_404(id)
