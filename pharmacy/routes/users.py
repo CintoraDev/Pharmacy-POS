@@ -8,7 +8,7 @@ users_bp = Blueprint('users', __name__)
 @users_bp.route('/users')
 @login_required
 def index():
-    users = User.query.all()
+    users = User.query.filter_by(status=True).all()
     return render_template('users/index.html', users = users)
 
 @users_bp.route('/users/create', methods=['POST'])
@@ -37,5 +37,17 @@ def create():
     db.session.add(new_user)
     db.session.commit()
     flash('Usuario creado correctamente', 'success')
+    return redirect(url_for('users.index'))
+
+
+@users_bp.route('/users/desactivate/<int:id>', methods=['POST'])
+@login_required
+def desactivate(id):
+    user = User.query.get_or_404(id)
+
+    user.status = False
+    db.session.commit()
+
+    flash('Usuario desactivado correctamente', 'success')
     return redirect(url_for('users.index'))
     
