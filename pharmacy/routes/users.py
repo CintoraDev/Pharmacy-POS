@@ -51,3 +51,19 @@ def desactivate(id):
     flash('Usuario desactivado correctamente', 'success')
     return redirect(url_for('users.index'))
     
+
+@users_bp.route('/users/update/<int:id>', methods=['POST'])
+@login_required
+def update(id):
+    user = User.query.get_or_404(id)
+    user.name = request.form.get('name')
+    user.email = request.form.get('email')
+    user.rol = request.form.get('rol')
+    password = request.form.get('password')
+    if password:
+        user.password = generate_password_hash(password)
+
+    db.session.commit()
+    flash('Usuario actualizado correctamente', 'success')
+    return redirect(url_for('users.index'))
+    
