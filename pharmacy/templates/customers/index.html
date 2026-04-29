@@ -24,26 +24,18 @@
             </tr>
         </thead>
         <tbody>
+            {%for customer in customers%}
             <tr>
-                <td>Carlos Cintora</td>
-                <td>CIGC05061</td>
-                <td>14/06/2005</td>
-                <td>90</td>
+                <td>{{customer.name}}</td>
+                <td>{{customer.rfc}}</td>
+                <td>{{ customer.birth_date.strftime('%d/%m/%Y') if customer.birth_date else '—' }}</td>
+                <td>{{customer.points}}</td>
                 <td>
                     <button class="btn btn-sm btn-warning">Editar</button>
                     <button class="btn btn-sm btn-danger">Eliminar</button>
                 </td>
             </tr>
-            <tr>
-                <td>Alexis Gonzalez</td>
-                <td>ALGC05731</td>
-                <td>08/09/1998</td>
-                <td>5</td>
-                <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                </td>
-            </tr>
+            {%endfor%}
         </tbody>
     </table>
 
