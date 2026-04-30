@@ -32,6 +32,7 @@ class Customer(db.Model):
     fiscal_regimen = db.Column(db.String(100), nullable=False)
     birth_date = db.Column(db.Date)
     points = db.Column(db.Integer, default=0)
+    status = db.Column(db.Boolean, default=True)
 
     sales = db.relationship('Sale', backref='customer')
     invoices = db.relationship('Invoice', backref='customer')
