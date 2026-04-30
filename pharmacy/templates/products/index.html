@@ -10,31 +10,44 @@
     </div>
 
     <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Buscar Producto...">
+        <input type="text" class="form-control mb-2" placeholder="Buscar Producto...">
+        <select name="id_category" class="form-select " id="prod-category">
+            <option value="">Seleccionar categoría</option>
+            {%for category in product_categories%}
+            <option value="{{category.id}}">{{category.name}}</option>
+            {%endfor%}
+        </select>
     </div>
 
     <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
                 <th>Nombre</th>
-                <th>Precio</th>
+                <th>Precio Venta</th>
+                <th>Precio Compra</th>
                 <th>Stock</th>
-                <th>Categoría</th>
+                <th>Unidad</th>
                 <th>Acciones</th>
             </tr>
         </thead>
 
         <tbody>
+            {% for product in products %}
             <tr>
-                <td>Ibuprofeno</td>
-                <td>10.50</td>
-                <td>20</td>
-                <td>Analgésico</td>
+                <td>{{product.name}}</td>
+                <td>{{product.price_sale}}</td>
+                <td>{{product.price_purchase}}</td>
+                <td>{{product.stock}}</td>
+                <td>{{product.unit}}</td>
                 <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#modal-edit-{{ product.id }}">Editar</button>
+                    <form method="POST" action="{{ url_for('products.desactivate', id=product.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
                 </td>
             </tr>
+            {%endfor%}
         </tbody>
     </table>
 
@@ -46,23 +59,40 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" id="form-product">
+                    <form method="POST" action="{{ url_for('products.create') }}" id="form-product">
                         <div class="mb-3">
                             <label class="form-label" for="prod-name">Nombre</label>
                             <input class="form-control" type="text" name="name" id="prod-name">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-price">Precio</label>
-                            <input class="form-control" type="number" name="price" step="0.01" id="prod-price">
+                            <label class="form-label" for="prod-description">Descripción</label>
+                            <textarea class="form-control" name="description" id="prod-description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-price-sale">Precio de Venta</label>
+                            <input class="form-control" type="number" name="price_sale" step="0.01"
+                                id="prod-price_sale">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-price-purchase">Precio de Compra</label>
+                            <input class="form-control" type="number" name="price_purchase" step="0.01"
+                                id="prod-price_purchase">
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="prod-stock">Stock</label>
                             <input class="form-control" type="number" name="stock" id="prod-stock">
                         </div>
                         <div class="mb-3">
+                            <label class="form-label" for="prod-unit">Unidad de medida</label>
+                            <input class="form-control" type="text" name="unit" id="prod-unit">
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label" for="prod-category">Categoría</label>
                             <select name="id_category" class="form-select" id="prod-category">
                                 <option value="">Seleccionar categoría</option>
+                                {%for category in product_categories%}
+                                <option value="{{category.id}}">{{category.name}}</option>
+                                {%endfor%}
                             </select>
                         </div>
                     </form>
@@ -74,6 +104,71 @@
             </div>
         </div>
     </div>
+
+
+
+
+    {% for product in products %}
+    <div class="modal fade" id="modal-edit-{{ product.id }}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('products.update', id=product.id) }}"
+                        id="form-product-{{ product.id }}">
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-name">Nombre</label>
+                            <input class="form-control" type="text" name="name" id="prod-name"
+                                value="{{ product.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-description">Descripción</label>
+                            <textarea class="form-control" name="description"
+                                id="prod-description">{{ product.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-price-sale">Precio de Venta</label>
+                            <input class="form-control" type="number" name="price_sale" step="0.01" id="prod-price_sale"
+                                value="{{ product.price_sale }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-price-purchase">Precio de Compra</label>
+                            <input class="form-control" type="number" name="price_purchase" step="0.01"
+                                id="prod-price_purchase" value="{{ product.price_purchase }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-stock">Stock</label>
+                            <input class="form-control" type="number" name="stock" id="prod-stock"
+                                value="{{ product.stock }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-unit">Unidad de medida</label>
+                            <input class="form-control" type="text" name="unit" id="prod-unit"
+                                value="{{ product.unit }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-category">Categoría</label>
+                            <select name="id_category" class="form-select" id="prod-category">
+                                <option value="">Seleccionar categoría</option>
+                                {% for category in product_categories %}
+                                <option value="{{ category.id }}" {% if product.id_category==category.id
+                                    %}selected{%endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary-custom" form="form-product-{{ product.id }}">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endfor%}
 
 </div>
 

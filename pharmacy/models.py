@@ -75,6 +75,7 @@ class Product(db.Model):
     sat_key = db.Column(db.String(20))
     unit = db.Column(db.String(20))
     id_category = db.Column(db.Integer, db.ForeignKey('product_categories.id'))
+    status = db.Column(db.Boolean, default=True)
 
     sale_details = db.relationship('SaleDetail', backref='product')
     purchase_details = db.relationship('PurchaseDetail', backref='product')
