@@ -31,8 +31,10 @@
                 <td>{{ customer.birth_date.strftime('%d/%m/%Y') if customer.birth_date else '—' }}</td>
                 <td>{{customer.points}}</td>
                 <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
+                    <button data-bs-toggle="modal" data-bs-target="#modal-edit-{{customer.id}}" class="btn btn-sm btn-warning">Editar</button>
+                   <form action="{{url_for('customers.desactivate', id = customer.id)}}" method="POST">
                     <button class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
                 </td>
             </tr>
             {%endfor%}
@@ -40,6 +42,7 @@
     </table>
 
     {% include 'customers/modal_add.html' %}
+    {% include 'customers/modal_edit.html'%}
 
 </div>
 
