@@ -1,0 +1,71 @@
+{% for customer in customers %}
+<div class="modal fade" id="modal-edit-{{ customer.id }}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            <form method="POST" action="{{url_for('customers.update', id=customer.id)}}" id="form-edit-customer-{{ customer.id }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="cust-name-{{ customer.id }}" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" name="name" id="cust-name-{{ customer.id }}" value="{{customer.name}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-rfc-{{ customer.id }}" class="form-label">RFC</label>
+                        <input type="text" class="form-control" name="rfc" id="cust-rfc-{{ customer.id }}" value="{{customer.rfc}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-email-{{ customer.id }}" class="form-label">Correo</label>
+                        <input type="email" class="form-control" name="email" id="cust-email-{{ customer.id }}" value="{{customer.email}}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-phone-{{ customer.id }}" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" name="phone" id="cust-phone-{{ customer.id }}" value="{{customer.phone}}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-address-{{ customer.id }}" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" name="address" id="cust-address-{{ customer.id }}" value="{{customer.address}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-city-{{ customer.id }}" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" name="city" id="cust-city-{{ customer.id }}" value="{{customer.city}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-state-{{ customer.id }}" class="form-label">Estado</label>
+                        <input type="text" class="form-control" name="state" id="cust-state-{{ customer.id }}" value="{{customer.state}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-zip-{{ customer.id }}" class="form-label">Código Postal</label>
+                        <input type="text" class="form-control" name="zip_code" id="cust-zip-{{ customer.id }}" value="{{customer.zip_code}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-fiscal-regimen-{{ customer.id }}" class="form-label">Régimen Fiscal</label>
+                        <input type="text" class="form-control" name="fiscal_regimen" id="cust-fiscal-regimen-{{ customer.id }}" value="{{customer.fiscal_regimen}}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cust-birth-date-{{ customer.id }}" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" name="birth_date" id="cust-birth-date-{{ customer.id }}" value="{{customer.birth_date}}">
+                    </div>
+                </div>
+            </form>
+        </div>
+            <div class="modal-footer">
+                <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
+                <button class="btn btn-primary-custom" form="form-edit-customer-{{ customer.id }}">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
