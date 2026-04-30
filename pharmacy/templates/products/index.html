@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+<div class="p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="text-white">Productos</h4>
+        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-add">
+            <i class="bi bi-square-plus me-1"></i> Agregar Producto
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Buscar Producto...">
+    </div>
+
+    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
+        <thead style="border-bottom: 2px solid #7F77DD;">
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Ibuprofeno</td>
+                <td>10.50</td>
+                <td>20</td>
+                <td>Analgésico</td>
+                <td>
+                    <button class="btn btn-sm btn-warning">Editar</button>
+                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="modal-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form-product">
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-name">Nombre</label>
+                            <input class="form-control" type="text" name="name" id="prod-name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-price">Precio</label>
+                            <input class="form-control" type="number" name="price" step="0.01" id="prod-price">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-stock">Stock</label>
+                            <input class="form-control" type="number" name="stock" id="prod-stock">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="prod-category">Categoría</label>
+                            <select name="id_category" class="form-select" id="prod-category">
+                                <option value="">Seleccionar categoría</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary-custom" form="form-product">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

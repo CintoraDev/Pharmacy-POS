@@ -6,7 +6,7 @@ from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.users import users_bp
 from routes.customers import customers_bp
-from routes.medications import medications_bp
+from routes.products import products_bp
 from routes.purchases import purchases_bp
 from routes.sales import sales_bp
 from routes.reports import reports_bp
@@ -31,7 +31,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(customers_bp)
-app.register_blueprint(medications_bp)
+app.register_blueprint(products_bp)
 app.register_blueprint(purchases_bp)
 app.register_blueprint(sales_bp)
 app.register_blueprint(reports_bp)
