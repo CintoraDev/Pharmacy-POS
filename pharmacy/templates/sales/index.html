@@ -7,16 +7,10 @@
         <!-- IZQUIERDA -->
         <div class="col-md-6">
             <div class="card p-3">
-                <input class="form-control mb-3" type="text" placeholder="Buscar producto...">
+                <input class="form-control mb-3" type="text" id="product-search" placeholder="Buscar producto...">
                 <p class="text-white">Resultados:</p>
                 <table class="table table-hover table-dark">
-                    <tbody>
-                        <tr>
-                            <td>Paracetamol</td>
-                            <td>$16</td>
-                            <td>Stock: 20</td>
-                            <td><button class="btn btn-sm btn-primary-custom">+ Agregar</button></td>
-                        </tr>
+                    <tbody id="search-results">
                     </tbody>
                 </table>
             </div>
@@ -27,10 +21,11 @@
             <div class="card p-3">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <label class="form-label mb-0">Cliente</label>
-                    <select name="client" class="form-select">
+                    <select name="customers" class="form-select">
                         <option disabled selected>Seleccionar</option>
-                        <option value="client1">Carlos Cintora</option>
-                        <option value="client2">Alexis Gonzalez</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }}</option>
+                        {% endfor %}
                     </select>
                     <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
                         data-bs-target="#modal-customer">
@@ -48,35 +43,21 @@
                             <th>Eliminar</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Paracetamol</td>
-                            <td>
-                                <div class="d-flex align-items-center ">
-                                    <button class="btn btn-sm btn-outline-secondary">-</button>
-                                    <span class="text-white px-2">1</span>
-                                    <button class="btn btn-sm btn-outline-secondary">+</button>
-                                </div>
-                            </td>
-                            <td>$16.00</td>
-                            <td><button class="btn btn-sm btn-danger">
-                                    <i class="bi bi-trash"></i>
-                                </button></td>
-                        </tr>
+                    <tbody id="cart-table">
+
                     </tbody>
                 </table>
 
-
                 <div class="p-2 mt-2 rounded" style="background-color: #0f0f1a;">
                     <div class="d-flex justify-content-between text-white">
-                        <span>Subtotal:</span><span>$35.00</span>
+                        <span>Subtotal:</span><span id="subtotal-value">$0.00</span>
                     </div>
                     <div class="d-flex justify-content-between text-white">
-                        <span>Descuento:</span><span>$0.00</span>
+                        <span>Descuento:</span><span id="discount-value">$0.00</span>
                     </div>
                     <hr style="border-color: #2a2a4a;">
                     <div class="d-flex justify-content-between text-white">
-                        <strong>Total:</strong><strong>$35.00</strong>
+                        <strong>Total:</strong><strong id="total-value">$0.00</strong>
                     </div>
                 </div>
 
@@ -86,6 +67,113 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const searchInput = document.getElementById('product-search');
+        const searchResults = document.getElementById('search-results');
+
+        let debounceTimer;
+
+        searchInput.addEventListener('input', () => {
+
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(async () => {
+
+                const q = searchInput.value;
+
+                if (q.length < 2) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                const response = await fetch(`/sales/search?q=${q}`);
+                const data = await response.json();
+
+                console.log(data);
+
+                searchResults.innerHTML = '';
+
+                data.forEach(product => {
+                    searchResults.innerHTML += `
+                <tr>
+                    <td>${product.name}</td>
+                    <td>Stock: ${product.stock}</td>
+                    <td>$${product.price}</td>
+                    <td><button class="btn btn-sm btn-primary-custom" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})">+ Agregar</button></td>
+                </tr>
+            `;
+                });
+
+            }, 300);
+
+        });
+    </script>
+
+
+    <script>
+        let cart = [];
+
+        function addToCart(id, name, price, stock) {
+            const existing = cart.find(item => item.id === id);
+
+
+            if (existing) {
+                if (existing.quantity >= existing.stock) {
+                    alert("No hay suficiente stock");
+                    return;
+                }
+                existing.quantity += 1;
+            }
+            else
+                cart.push({ id, name, price, stock, quantity: 1 });
+
+            renderCart()
+        }
+
+        function renderCart() {
+            const cartTable = document.querySelector("#cart-table");
+            const spanSubtotal = document.querySelector("#span-subtotal");
+            cartTable.innerHTML = "";
+
+            cart.forEach(item => {
+                cartTable.innerHTML += `
+                    <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}<button class="btn btn-sm btn-primary-custom" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.stock})">+</button></td>
+                    <td>$${item.price}</td>
+                    <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})"><i class="bi bi-trash"></i></button></td>
+                </tr>
+        `;
+
+            });
+            updateTotals()
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const applyDiscount = false;
+            const discountAmount = applyDiscount ? subtotal * 0.10 : 0;
+            const totalFinal = subtotal - discountAmount;
+
+            document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('discount-value').textContent = `-$${discountAmount.toFixed(2)}`;
+            document.getElementById('total-value').textContent = `$${totalFinal.toFixed(2)}`;
+        }
+
+
+
+    </script>
+
+
+
 
     {% include 'customers/modal_add.html' %}
 
