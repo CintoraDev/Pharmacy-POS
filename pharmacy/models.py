@@ -76,9 +76,11 @@ class Product(db.Model):
     unit = db.Column(db.String(20))
     id_category = db.Column(db.Integer, db.ForeignKey('product_categories.id'))
     status = db.Column(db.Boolean, default=True)
-
+    id_provider = db.Column(db.Integer, db.ForeignKey('providers.id'))
+    
     sale_details = db.relationship('SaleDetail', backref='product')
     purchase_details = db.relationship('PurchaseDetail', backref='product')
+    provider = db.relationship('Provider', backref='products')
 
 
 class Purchase(db.Model):

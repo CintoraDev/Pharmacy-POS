@@ -11,11 +11,11 @@
 
     <div class="mb-3">
         <input type="text" class="form-control mb-2" placeholder="Buscar Producto...">
-        <select name="id_category" class="form-select " id="prod-category">
+        <select name="id_category" class="form-select" id="filter-category">
             <option value="">Seleccionar categoría</option>
-            {%for category in product_categories%}
-            <option value="{{category.id}}">{{category.name}}</option>
-            {%endfor%}
+            {% for category in product_categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
         </select>
     </div>
 
@@ -26,19 +26,20 @@
                 <th>Precio Venta</th>
                 <th>Precio Compra</th>
                 <th>Stock</th>
+                <th>Proveedor</th>
                 <th>Unidad</th>
                 <th>Acciones</th>
             </tr>
         </thead>
-
         <tbody>
             {% for product in products %}
             <tr>
-                <td>{{product.name}}</td>
-                <td>{{product.price_sale}}</td>
-                <td>{{product.price_purchase}}</td>
-                <td>{{product.stock}}</td>
-                <td>{{product.unit}}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price_sale }}</td>
+                <td>{{ product.price_purchase }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.provider.name if product.provider else '—' }}</td>
+                <td>{{ product.unit }}</td>
                 <td>
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                         data-bs-target="#modal-edit-{{ product.id }}">Editar</button>
@@ -47,12 +48,12 @@
                     </form>
                 </td>
             </tr>
-            {%endfor%}
+            {% endfor %}
         </tbody>
     </table>
 
     <div class="modal fade" id="modal-add">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Agregar Producto</h5>
@@ -71,16 +72,21 @@
                         <div class="mb-3">
                             <label class="form-label" for="prod-price-sale">Precio de Venta</label>
                             <input class="form-control" type="number" name="price_sale" step="0.01"
-                                id="prod-price_sale">
+                                id="prod-price-sale">
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="prod-price-purchase">Precio de Compra</label>
                             <input class="form-control" type="number" name="price_purchase" step="0.01"
-                                id="prod-price_purchase">
+                                id="prod-price-purchase">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-stock">Stock</label>
-                            <input class="form-control" type="number" name="stock" id="prod-stock">
+                            <label class="form-label" for="prod-provider">Proveedor</label>
+                            <select name="id_provider" class="form-select" id="prod-provider">
+                                <option value="">Seleccionar proveedor</option>
+                                {% for provider in providers %}
+                                <option value="{{ provider.id }}">{{ provider.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="prod-unit">Unidad de medida</label>
@@ -90,9 +96,9 @@
                             <label class="form-label" for="prod-category">Categoría</label>
                             <select name="id_category" class="form-select" id="prod-category">
                                 <option value="">Seleccionar categoría</option>
-                                {%for category in product_categories%}
-                                <option value="{{category.id}}">{{category.name}}</option>
-                                {%endfor%}
+                                {% for category in product_categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </form>
@@ -105,12 +111,9 @@
         </div>
     </div>
 
-
-
-
     {% for product in products %}
     <div class="modal fade" id="modal-edit-{{ product.id }}">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editar Producto</h5>
@@ -120,42 +123,48 @@
                     <form method="POST" action="{{ url_for('products.update', id=product.id) }}"
                         id="form-product-{{ product.id }}">
                         <div class="mb-3">
-                            <label class="form-label" for="prod-name">Nombre</label>
-                            <input class="form-control" type="text" name="name" id="prod-name"
-                                value="{{ product.name }}">
+                            <label class="form-label">Nombre</label>
+                            <input class="form-control" type="text" name="name" value="{{ product.name }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-description">Descripción</label>
-                            <textarea class="form-control" name="description"
-                                id="prod-description">{{ product.description }}</textarea>
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control" name="description">{{ product.description }}</textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-price-sale">Precio de Venta</label>
-                            <input class="form-control" type="number" name="price_sale" step="0.01" id="prod-price_sale"
+                            <label class="form-label">Precio de Venta</label>
+                            <input class="form-control" type="number" name="price_sale" step="0.01"
                                 value="{{ product.price_sale }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-price-purchase">Precio de Compra</label>
+                            <label class="form-label">Precio de Compra</label>
                             <input class="form-control" type="number" name="price_purchase" step="0.01"
-                                id="prod-price_purchase" value="{{ product.price_purchase }}">
+                                value="{{ product.price_purchase }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-stock">Stock</label>
-                            <input class="form-control" type="number" name="stock" id="prod-stock"
-                                value="{{ product.stock }}">
+                            <label class="form-label">Proveedor</label>
+                            <select name="id_provider" class="form-select">
+                                <option value="">Seleccionar proveedor</option>
+                                {% for provider in providers %}
+                                <option value="{{ provider.id }}" {% if product.id_provider==provider.id %}selected{%
+                                    endif %}>
+                                    {{ provider.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-unit">Unidad de medida</label>
-                            <input class="form-control" type="text" name="unit" id="prod-unit"
-                                value="{{ product.unit }}">
+                            <label class="form-label">Unidad de medida</label>
+                            <input class="form-control" type="text" name="unit" value="{{ product.unit }}">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="prod-category">Categoría</label>
-                            <select name="id_category" class="form-select" id="prod-category">
+                            <label class="form-label">Categoría</label>
+                            <select name="id_category" class="form-select">
                                 <option value="">Seleccionar categoría</option>
                                 {% for category in product_categories %}
-                                <option value="{{ category.id }}" {% if product.id_category==category.id
-                                    %}selected{%endif %}>{{ category.name }}</option>
+                                <option value="{{ category.id }}" {% if product.id_category==category.id %}selected{%
+                                    endif %}>
+                                    {{ category.name }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -168,8 +177,7 @@
             </div>
         </div>
     </div>
-    {%endfor%}
+    {% endfor %}
 
 </div>
-
 {% endblock %}
