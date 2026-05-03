@@ -4,7 +4,6 @@
     <h4 class="text-white mb-3">Ventas</h4>
     <div class="row g-3">
 
-        <!-- IZQUIERDA -->
         <div class="col-md-6">
             <div class="card p-3">
                 <input class="form-control mb-3" type="text" id="product-search" placeholder="Buscar producto...">
@@ -16,12 +15,11 @@
             </div>
         </div>
 
-        <!-- DERECHA -->
         <div class="col-md-6">
             <div class="card p-3">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <label class="form-label mb-0">Cliente</label>
-                    <select name="customers" class="form-select">
+                    <select id="customer-select" name="customers" class="form-select">
                         <option disabled selected>Seleccionar</option>
                         {% for customer in customers %}
                         <option value="{{ customer.id }}">{{ customer.name }}</option>
@@ -29,7 +27,6 @@
                     </select>
                     <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
                         data-bs-target="#modal-customer">
-
                         <i class="bi bi-person-plus"></i>
                     </button>
                 </div>
@@ -44,7 +41,6 @@
                         </tr>
                     </thead>
                     <tbody id="cart-table">
-
                     </tbody>
                 </table>
 
@@ -61,7 +57,7 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary-custom w-100 mt-2">
+                <button class="btn btn-primary-custom w-100 mt-2" onclick="createSale()" id="finish-sale-btn">
                     Finalizar Venta
                 </button>
             </div>
@@ -75,11 +71,9 @@
         let debounceTimer;
 
         searchInput.addEventListener('input', () => {
-
             clearTimeout(debounceTimer);
 
             debounceTimer = setTimeout(async () => {
-
                 const q = searchInput.value;
 
                 if (q.length < 2) {
@@ -90,33 +84,30 @@
                 const response = await fetch(`/sales/search?q=${q}`);
                 const data = await response.json();
 
-                console.log(data);
-
                 searchResults.innerHTML = '';
 
                 data.forEach(product => {
                     searchResults.innerHTML += `
-                <tr>
-                    <td>${product.name}</td>
-                    <td>Stock: ${product.stock}</td>
-                    <td>$${product.price}</td>
-                    <td><button class="btn btn-sm btn-primary-custom" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})">+ Agregar</button></td>
-                </tr>
-            `;
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>Stock: ${product.stock}</td>
+                            <td>$${product.price}</td>
+                            <td><button class="btn btn-sm btn-primary-custom" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})">+ Agregar</button></td>
+                        </tr>
+                    `;
                 });
 
             }, 300);
-
         });
     </script>
-
 
     <script>
         let cart = [];
 
+        document.getElementById('customer-select').addEventListener('change', updateTotals);
+
         function addToCart(id, name, price, stock) {
             const existing = cart.find(item => item.id === id);
-
 
             if (existing) {
                 if (existing.quantity >= existing.stock) {
@@ -124,30 +115,35 @@
                     return;
                 }
                 existing.quantity += 1;
-            }
-            else
+                renderCart();
+            } else {
+                if (stock <= 0) {
+                    alert("No hay suficiente stock");
+                    return;
+                }
                 cart.push({ id, name, price, stock, quantity: 1 });
-
-            renderCart()
+                renderCart();
+            }
         }
 
-        function renderCart() {
+        async function renderCart() {
             const cartTable = document.querySelector("#cart-table");
-            const spanSubtotal = document.querySelector("#span-subtotal");
             cartTable.innerHTML = "";
 
             cart.forEach(item => {
                 cartTable.innerHTML += `
                     <tr>
-                    <td>${item.name}</td>
-                    <td>${item.quantity}<button class="btn btn-sm btn-primary-custom" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.stock})">+</button></td>
-                    <td>$${item.price}</td>
-                    <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})"><i class="bi bi-trash"></i></button></td>
-                </tr>
-        `;
-
+                        <td>${item.name}</td>
+                        <td>${item.quantity}
+                            <button class="btn btn-sm btn-primary-custom" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.stock})">+</button>
+                        </td>
+                        <td>$${item.price}</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})"><i class="bi bi-trash"></i></button></td>
+                    </tr>
+                `;
             });
-            updateTotals()
+
+            await updateTotals();
         }
 
         function removeFromCart(id) {
@@ -155,11 +151,23 @@
             renderCart();
         }
 
-
-        function updateTotals() {
+        async function updateTotals() {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-            const applyDiscount = false;
+            document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
+
+            const customer = document.getElementById('customer-select').value;
+
+            if (!customer || isNaN(customer)) {
+                document.getElementById('discount-value').textContent = `-$0.00`;
+                document.getElementById('total-value').textContent = `$${subtotal.toFixed(2)}`;
+                return;
+            }
+
+            const response = await fetch(`/customers/points/${customer}`);
+            const data = await response.json();
+
+            const applyDiscount = data.points >= 50;
             const discountAmount = applyDiscount ? subtotal * 0.10 : 0;
             const totalFinal = subtotal - discountAmount;
 
@@ -168,12 +176,47 @@
             document.getElementById('total-value').textContent = `$${totalFinal.toFixed(2)}`;
         }
 
+        async function createSale() {
+            const customer = document.getElementById('customer-select').value;
 
+            if (!customer || isNaN(customer) || cart.length === 0) {
+                alert('Debe seleccionar un cliente y al menos un producto');
+                return;
+            }
 
+            try {
+                const response = await fetch('/sales/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer_id: customer,
+                        items: cart.map(item => ({
+                            id: item.id,
+                            quantity: item.quantity
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    cart = [];
+                    renderCart();
+                    document.getElementById('customer-select').selectedIndex = 0;
+                    document.getElementById('search-results').innerHTML = '';
+                } else {
+                    alert(data.message);
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert('Ocurrió un error al procesar la venta');
+            }
+        }
     </script>
-
-
-
 
     {% include 'customers/modal_add.html' %}
 
