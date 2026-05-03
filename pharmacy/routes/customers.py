@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from models import Customer, db
 from utils import role_required
@@ -77,5 +77,15 @@ def update(id):
     db.session.commit()
     flash('Cliente actualizado correctamente', 'success')
     return redirect(url_for('customers.index'))
+
+
+
+@customers_bp.route('/customers/points/<int:id>', methods=['GET'])
+@login_required 
+def get_customer_points(id):
+    customer = Customer.query.get_or_404(id)
+    points = customer.points
+    
+    return jsonify({'points': points})
     
 
