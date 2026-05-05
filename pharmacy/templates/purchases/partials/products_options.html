@@ -1,0 +1,7 @@
+<option value="">Seleccionar producto</option>
+{% for product in products %}
+<option value="{{ product.id }}" data-name="{{product.name}}" data-price="{{ product.price_purchase }}"
+    data-stock="{{ product.stock }}">
+    {{ product.name }} (Stock Actual:{{ product.stock }})
+</option>
+{% endfor %}

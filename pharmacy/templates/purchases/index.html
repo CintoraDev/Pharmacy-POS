@@ -4,8 +4,7 @@
 <div class="p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="text-white">Compras</h4>
-        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal"
-            data-bs-target="#modal-purchase">
+        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-purchase">
             <i class="bi bi-bag-plus me-1"></i> Nueva Compra
         </button>
     </div>
@@ -17,33 +16,26 @@
     <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
         <thead style="border-bottom: 2px solid #7F77DD;">
             <tr>
-                <th>Proveedor</th>
+                <th>Nombre del proveedor</th>
+                <th>Email del proveedor</th>
+                <th>Usuario</th>
                 <th>Fecha De Compra</th>
                 <th>Total</th>
-                <th>Acciones</th>
             </tr>
         </thead>
 
         <tbody>
-            <tr>
-                <td>Farmacias Guadalajara</td>
-                <td>10/04/2026</td>
-                <td>1500.00</td>
-                <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                </td>
-            </tr>
 
+            {% for purchase in purchases %}
             <tr>
-                <td>Farmacia Similares</td>
-                <td>10/04/2026</td>
-                <td>1500.00</td>
-                <td>
-                    <button class="btn btn-sm btn-warning">Editar</button>
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                </td>
+                <td>{{ purchase.provider.name}}</td>
+                <td>{{ purchase.provider.email}}</td>
+                <td>{{ purchase.user.name }}</td>
+                <td>{{ purchase.date.strftime('%d/%m/%Y')}}</td>
+                <td>${{ purchase.total}}</td>
             </tr>
+            {% endfor %}
+
         </tbody>
     </table>
 
@@ -60,7 +52,14 @@
                     <form method="POST" id="form-purchase">
                         <div class="mb-3">
                             <label class="form-label" for="pur-provider">Proveedor</label>
-                            <input class="form-control" type="text" name="provider" id="pur-provider">
+                            <select id="id_provider" name="id_provider" class="form-select"
+                                hx-get="/purchases/products-by-provider" hx-target="#products-select"
+                                hx-trigger="change" hx-include="[name='id_provider']">
+                                <option value="">Seleccionar proveedor</option>
+                                {% for provider in providers %}
+                                <option value="{{ provider.id }}">{{ provider.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="pur-date">Fecha De Compra</label>
@@ -68,52 +67,38 @@
                         </div>
 
                         <div class="mb-3 d-flex align-items-center gap-3">
-                            <select class="form-select" name="medicine">
-                                <option value="" disabled selected>Medicamento</option>
-                                <option value="paracetamol">Paracetamol</option>
-                                <option value="ibuprofeno">Ibuprofeno</option>
-                                <option value="amoxicilina">Amoxicilina</option>
+                            <select class="form-select" id="products-select" name="id_product">
+                                <option value="">Primero selecciona un proveedor</option>
                             </select>
-                            <input type="number" class="form-control" name="quantity" placeholder="Cantidad"
-                                style="width: 120px;" value="">
-                            <input type="number" class="form-control" name="price" placeholder="Precio" step="0.01"
-                                style="width: 120px;" value="">
-                            <button type="button" class="btn btn-sm btn-primary-custom" style="white-space: nowrap;">
+                            <input id="purchase-quantity" type="number" class="form-control" name="quantity"
+                                placeholder="Cantidad" style="width: 120px;" value="">
+                            <input id="purchase-price" type="number" class="form-control" name="price"
+                                placeholder="Precio" step="0.01" style="width: 120px;" value="">
+                            <button id="add_product_btn" onclick="addToCart()" type="button"
+                                class="btn btn-sm btn-primary-custom" style="white-space: nowrap;">
                                 + Agregar
                             </button>
                         </div>
-
-
 
                         <div>
                             <table class="table table-hover table-dark"
                                 style="border: 2px solid #2a2a4a; border-radius: 8px;">
                                 <thead style="border-bottom: 2px solid #7F77DD;">
                                     <tr>
-                                        <th>Medicamento</th>
+                                        <th>Producto</th>
                                         <th>Cantidad</th>
                                         <th>Precio</th>
                                         <th>Subtotal</th>
                                         <th>Eliminar</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Paracetamol</td>
-                                        <td>10</td>
-                                        <td>16.80</td>
-                                        <td>168.00</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody id="purchase-cart">
+
                                 </tbody>
                             </table>
 
-                            <div class="mb-3">
-                                <label class="form-label">Total: $1000.00</label>
+                            <div class="mb-3 text-end">
+                                <label style="color:white" class="h4" id="purchase-total">Total: $0.00</label>
                             </div>
 
                         </div>
@@ -121,12 +106,117 @@
                 </div>
                 <div class="modal-footer">
                     <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn btn-primary-custom" form="form-purchase">Guardar</button>
+                    <button class="btn btn-primary-custom" onclick="createPurchase()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        let cart = [];
 
+        function addToCart() {
+            const select = document.getElementById('products-select');
+            const selectedOption = select.options[select.selectedIndex];
+
+            const id = select.value;
+            const name = selectedOption.dataset.name;
+            const price = document.getElementById('purchase-price').value
+            const quantity = document.getElementById('purchase-quantity').value
+            const date = document.getElementById('pur-date').value
+
+            if (!id || !quantity || quantity <= 0 || price <= 0 || !date) {
+                alert('Por favor complete todos los campos');
+                return;
+            }
+
+            const existing = cart.find(product => product.id === id)
+
+            if (existing) {
+                existing.quantity = Number(existing.quantity) + Number(quantity);
+            }
+            else {
+                cart.push({ id, name, price, quantity });
+            }
+            renderCart(cart);
+        }
+
+
+        function renderCart() {
+
+            purchaseCart = document.getElementById('purchase-cart')
+            purchaseCart.innerHTML = ""
+            const total = cart.reduce((sum, product) => sum + (product.price * product.quantity), 0);
+
+            cart.forEach(product => {
+                purchaseCart.innerHTML += `
+                    <tr>
+                    <td>${product.name}</td >
+                    <td>${product.quantity}</td>
+                    <td>${product.price}</td>
+                    <td>${(product.price * product.quantity).toFixed(2)}</td>
+                    <td>
+                        <button type="button" onclick="removeFromCart(${product.id})" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr >
+                `;
+
+            });
+            document.getElementById('purchase-total').innerText = `Total: $${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(product => Number(product.id) !== Number(id));
+            renderCart()
+        }
+
+
+        async function createPurchase() {
+            date = document.getElementById('pur-date').value
+            id_provider = document.getElementById('id_provider').value
+
+            if (!id_provider || cart.length === 0) {
+                alert('Selecciona un provedor y minimo un producto')
+                return
+            }
+            const response = await fetch('/purchases/create', {
+
+
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    date: date,
+                    id_provider: id_provider,
+                    products: cart.map(product => ({
+                        id: product.id,
+                        quantity: product.quantity,
+                        price: product.price
+                    }))
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message)
+                cart = [];
+                renderCart();
+                window.location.reload()
+
+            }
+            else {
+                alert(data.message)
+            }
+
+
+
+
+        }
+
+    </script>
 
 </div>
 
