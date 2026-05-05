@@ -87,7 +87,7 @@ class Purchase(db.Model):
     __tablename__ = 'purchases'
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.Date, nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
     id_provider = db.Column(db.Integer, db.ForeignKey('providers.id'))
     id_user = db.Column(db.Integer, db.ForeignKey('users.id'))
