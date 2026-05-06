@@ -1,17 +1,19 @@
 from flask_login import current_user
-from models import Sale, SaleDetail
+from models import Sale, SaleDetail, Invoice, Emisor
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required
 from models import Product, db, Customer
 from datetime import datetime
+import uuid
 
 sales_bp = Blueprint('sales', __name__)
 
 @sales_bp.route('/sales')
 @login_required
 def index():
+    sales = Sale.query.all()
     customers = Customer.query.filter_by(status=True).all()
-    return render_template('sales/index.html', customers=customers)
+    return render_template('sales/index.html', customers=customers, sales=sales)
 
 
 @sales_bp.route('/sales/search')
@@ -91,3 +93,55 @@ def create_sale():
 
     db.session.commit()
     return jsonify({'success': True, 'message': 'Venta realizada correctamente'})
+
+
+
+
+@sales_bp.route('/sales/invoices/create', methods=['POST'])
+@login_required
+def createInvoice():
+    data = request.get_json()
+    sale_id = data.get('sale_id')
+    sale = Sale.query.get_or_404(sale_id)
+
+    customer = Customer.query.get(sale.id_customer)
+    if not customer.rfc or not customer.email:
+        return jsonify({'success': False, 'message': 'Cliente sin datos fiscales'})
+
+
+
+    emisor = Emisor.query.first()
+
+    subtotal = float(sale.subtotal) - float(sale.discount)
+    iva = round(subtotal * 0.16, 2)
+    total = round(subtotal + iva, 2)
+    
+    new_invoice = Invoice(
+        emission_date=datetime.now(),
+        id_sale=sale.id,
+        id_customer=sale.id_customer,
+        subtotal=round(subtotal, 2),
+        iva = iva,
+        total = total,
+        cfdi_use = "G03",
+        payment_method = "PUE",
+        payment_type = "01",
+        fiscal_regimen = "601",
+        zip_expedition = "00000",
+        id_emisor = emisor.id,
+        folio = f"F-{sale.id:04d}",
+        fiscal_folio = str(uuid.uuid4())
+    )
+    
+    db.session.add(new_invoice)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Factura creada correctamente', 'invoice_id': new_invoice.id})
+
+
+
+
+@sales_bp.route('/sales/invoices/<int:invoice_id>', methods=['GET'])
+@login_required
+def showInvoice(invoice_id):
+    invoice = Invoice.query.get_or_404(invoice_id)
+    return render_template('invoices/invoice_pdf.html', invoice=invoice)

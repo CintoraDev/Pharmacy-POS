@@ -1,93 +1,149 @@
 {% extends "base.html" %}
 {% block contenido %}
-<div class="p-4">
-    <h4 class="text-white mb-3">Ventas</h4>
-    <div class="row g-3">
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#new-sale">Nueva Venta</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#history-sales">Historial</a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane active" id="new-sale">
+        <div class="p-4">
+            <h4 class="text-white mb-3">Ventas</h4>
+            <div class="row g-3">
 
-        <div class="col-md-6">
-            <div class="card p-3">
-                <input class="form-control mb-3" type="text" id="product-search" placeholder="Buscar producto...">
-                <p class="text-white">Resultados:</p>
-                <table class="table table-hover table-dark">
-                    <tbody id="search-results">
-                    </tbody>
-                </table>
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <input class="form-control mb-3" type="text" id="product-search"
+                            placeholder="Buscar producto...">
+                        <p class="text-white">Resultados:</p>
+                        <table class="table table-hover table-dark">
+                            <tbody id="search-results">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <label class="form-label mb-0">Cliente</label>
+                            <select id="customer-select" name="customers" class="form-select">
+                                <option disabled selected>Seleccionar</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
+                                data-bs-target="#modal-customer">
+                                <i class="bi bi-person-plus"></i>
+                            </button>
+                        </div>
+
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cart-table">
+                            </tbody>
+                        </table>
+
+                        <div class="p-2 mt-2 rounded" style="background-color: #0f0f1a;">
+                            <div class="d-flex justify-content-between text-white">
+                                <span>Subtotal:</span><span id="subtotal-value">$0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-white">
+                                <span>Descuento:</span><span id="discount-value">$0.00</span>
+                            </div>
+                            <hr style="border-color: #2a2a4a;">
+                            <div class="d-flex justify-content-between text-white">
+                                <strong>Total:</strong><strong id="total-value">$0.00</strong>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary-custom w-100 mt-2" onclick="createSale()" id="finish-sale-btn">
+                            Finalizar Venta
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card p-3">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <label class="form-label mb-0">Cliente</label>
-                    <select id="customer-select" name="customers" class="form-select">
-                        <option disabled selected>Seleccionar</option>
-                        {% for customer in customers %}
-                        <option value="{{ customer.id }}">{{ customer.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
-                        data-bs-target="#modal-customer">
-                        <i class="bi bi-person-plus"></i>
-                    </button>
-                </div>
 
+
+
+    </div>
+    <div class="tab-pane" id="history-sales">
+
+        <div class="p-4" id="history-sales">
+            <h4 class="text-white mb-3">Historial de Ventas</h4>
+            <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                            <th>Eliminar</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Subtotal</th>
+                            <th>Descuento</th>
+                            <th>Total</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
-                    <tbody id="cart-table">
+
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>{{sale.date.strftime('%d/%m/%Y') }}</td>
+                            <td>{{sale.customer.name}}</td>
+                            <td>{{sale.subtotal}}</td>
+                            <td>{{sale.discount}}</td>
+                            <td>{{sale.total}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="generateInvoice({{sale.id}})">
+                                    <i class="bi bi-eye"></i> Generar Factura
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-
-                <div class="p-2 mt-2 rounded" style="background-color: #0f0f1a;">
-                    <div class="d-flex justify-content-between text-white">
-                        <span>Subtotal:</span><span id="subtotal-value">$0.00</span>
-                    </div>
-                    <div class="d-flex justify-content-between text-white">
-                        <span>Descuento:</span><span id="discount-value">$0.00</span>
-                    </div>
-                    <hr style="border-color: #2a2a4a;">
-                    <div class="d-flex justify-content-between text-white">
-                        <strong>Total:</strong><strong id="total-value">$0.00</strong>
-                    </div>
-                </div>
-
-                <button class="btn btn-primary-custom w-100 mt-2" onclick="createSale()" id="finish-sale-btn">
-                    Finalizar Venta
-                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        const searchInput = document.getElementById('product-search');
-        const searchResults = document.getElementById('search-results');
+{% include 'customers/modal_add.html' %}
+<script>
+    const searchInput = document.getElementById('product-search');
+    const searchResults = document.getElementById('search-results');
 
-        let debounceTimer;
+    let debounceTimer;
 
-        searchInput.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
 
-            debounceTimer = setTimeout(async () => {
-                const q = searchInput.value;
+        debounceTimer = setTimeout(async () => {
+            const q = searchInput.value;
 
-                if (q.length < 2) {
-                    searchResults.innerHTML = '';
-                    return;
-                }
-
-                const response = await fetch(`/sales/search?q=${q}`);
-                const data = await response.json();
-
+            if (q.length < 2) {
                 searchResults.innerHTML = '';
+                return;
+            }
 
-                data.forEach(product => {
-                    searchResults.innerHTML += `
+            const response = await fetch(`/sales/search?q=${q}`);
+            const data = await response.json();
+
+            searchResults.innerHTML = '';
+
+            data.forEach(product => {
+                searchResults.innerHTML += `
                         <tr>
                             <td>${product.name}</td>
                             <td>Stock: ${product.stock}</td>
@@ -95,43 +151,43 @@
                             <td><button class="btn btn-sm btn-primary-custom" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})">+ Agregar</button></td>
                         </tr>
                     `;
-                });
+            });
 
-            }, 300);
-        });
-    </script>
+        }, 300);
+    });
+</script>
 
-    <script>
-        let cart = [];
+<script>
+    let cart = [];
 
-        document.getElementById('customer-select').addEventListener('change', updateTotals);
+    document.getElementById('customer-select').addEventListener('change', updateTotals);
 
-        function addToCart(id, name, price, stock) {
-            const existing = cart.find(item => item.id === id);
+    function addToCart(id, name, price, stock) {
+        const existing = cart.find(item => item.id === id);
 
-            if (existing) {
-                if (existing.quantity >= existing.stock) {
-                    alert("No hay suficiente stock");
-                    return;
-                }
-                existing.quantity += 1;
-                renderCart();
-            } else {
-                if (stock <= 0) {
-                    alert("No hay suficiente stock");
-                    return;
-                }
-                cart.push({ id, name, price, stock, quantity: 1 });
-                renderCart();
+        if (existing) {
+            if (existing.quantity >= existing.stock) {
+                alert("No hay suficiente stock");
+                return;
             }
+            existing.quantity += 1;
+            renderCart();
+        } else {
+            if (stock <= 0) {
+                alert("No hay suficiente stock");
+                return;
+            }
+            cart.push({ id, name, price, stock, quantity: 1 });
+            renderCart();
         }
+    }
 
-        async function renderCart() {
-            const cartTable = document.querySelector("#cart-table");
-            cartTable.innerHTML = "";
+    async function renderCart() {
+        const cartTable = document.querySelector("#cart-table");
+        cartTable.innerHTML = "";
 
-            cart.forEach(item => {
-                cartTable.innerHTML += `
+        cart.forEach(item => {
+            cartTable.innerHTML += `
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.quantity}
@@ -141,84 +197,110 @@
                         <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})"><i class="bi bi-trash"></i></button></td>
                     </tr>
                 `;
+        });
+
+        await updateTotals();
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(item => item.id !== id);
+        renderCart();
+    }
+
+    async function updateTotals() {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
+
+        const customer = document.getElementById('customer-select').value;
+
+        if (!customer || isNaN(customer)) {
+            document.getElementById('discount-value').textContent = `-$0.00`;
+            document.getElementById('total-value').textContent = `$${subtotal.toFixed(2)}`;
+            return;
+        }
+
+        const response = await fetch(`/customers/points/${customer}`);
+        const data = await response.json();
+
+        const applyDiscount = data.points >= 50;
+        const discountAmount = applyDiscount ? subtotal * 0.10 : 0;
+        const totalFinal = subtotal - discountAmount;
+
+        document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('discount-value').textContent = `-$${discountAmount.toFixed(2)}`;
+        document.getElementById('total-value').textContent = `$${totalFinal.toFixed(2)}`;
+    }
+
+    async function createSale() {
+        const customer = document.getElementById('customer-select').value;
+
+        if (!customer || isNaN(customer) || cart.length === 0) {
+            alert('Debe seleccionar un cliente y al menos un producto');
+            return;
+        }
+
+        try {
+            const response = await fetch('/sales/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    customer_id: customer,
+                    items: cart.map(item => ({
+                        id: item.id,
+                        quantity: item.quantity
+                    }))
+                })
             });
 
-            await updateTotals();
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            renderCart();
-        }
-
-        async function updateTotals() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
-
-            const customer = document.getElementById('customer-select').value;
-
-            if (!customer || isNaN(customer)) {
-                document.getElementById('discount-value').textContent = `-$0.00`;
-                document.getElementById('total-value').textContent = `$${subtotal.toFixed(2)}`;
-                return;
-            }
-
-            const response = await fetch(`/customers/points/${customer}`);
             const data = await response.json();
 
-            const applyDiscount = data.points >= 50;
-            const discountAmount = applyDiscount ? subtotal * 0.10 : 0;
-            const totalFinal = subtotal - discountAmount;
-
-            document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('discount-value').textContent = `-$${discountAmount.toFixed(2)}`;
-            document.getElementById('total-value').textContent = `$${totalFinal.toFixed(2)}`;
-        }
-
-        async function createSale() {
-            const customer = document.getElementById('customer-select').value;
-
-            if (!customer || isNaN(customer) || cart.length === 0) {
-                alert('Debe seleccionar un cliente y al menos un producto');
-                return;
+            if (data.success) {
+                alert(data.message);
+                cart = [];
+                renderCart();
+                document.getElementById('customer-select').selectedIndex = 0;
+                document.getElementById('search-results').innerHTML = '';
+            } else {
+                alert(data.message);
             }
 
-            try {
-                const response = await fetch('/sales/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        customer_id: customer,
-                        items: cart.map(item => ({
-                            id: item.id,
-                            quantity: item.quantity
-                        }))
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(data.message);
-                    cart = [];
-                    renderCart();
-                    document.getElementById('customer-select').selectedIndex = 0;
-                    document.getElementById('search-results').innerHTML = '';
-                } else {
-                    alert(data.message);
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert('Ocurrió un error al procesar la venta');
-            }
+        } catch (error) {
+            console.error(error);
+            alert('Ocurrió un error al procesar la venta');
         }
-    </script>
+    }
+</script>
 
-    {% include 'customers/modal_add.html' %}
+
+
+<script>
+    async function generateInvoice(saleId) {
+        try {
+            const response = await fetch(`/sales/invoices/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sale_id: saleId
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.open(`/sales/invoices/${data.invoice_id}`, '_blank')
+            } else {
+                alert(data.message);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert('Ocurrió un error al generar la factura');
+        }
+    }
+</script>
 
 </div>
 {% endblock %}
