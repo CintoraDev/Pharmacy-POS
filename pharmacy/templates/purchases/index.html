@@ -1,224 +1,247 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<div class="p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Compras</h4>
-        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-purchase">
-            <i class="bi bi-bag-plus me-1"></i> Nueva Compra
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="section-title">Órdenes de Compra</h1>
+            <p class="section-sub">Gestiona el reabastecimiento de inventario con proveedores</p>
+        </div>
+        <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modal-purchase">
+            <i class="bi bi-bag-plus me-2"></i>Nueva Compra
         </button>
     </div>
+</div>
 
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Buscar Compra...">
+<div class="row mb-4">
+    <div class="col-md-5">
+        <div class="input-group">
+            <span class="input-group-text bg-elevated border-end-0 border-subtle" style="color: var(--text-muted);">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" placeholder="Buscar por proveedor o folio...">
+        </div>
     </div>
+</div>
 
-    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
-        <thead style="border-bottom: 2px solid #7F77DD;">
+<div class="table-wrapper">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>Nombre del proveedor</th>
-                <th>Email del proveedor</th>
+                <th>Proveedor</th>
+                <th>Contacto</th>
                 <th>Usuario</th>
-                <th>Fecha De Compra</th>
-                <th>Total</th>
+                <th>Fecha de Compra</th>
+                <th class="text-end">Total</th>
             </tr>
         </thead>
-
         <tbody>
-
             {% for purchase in purchases %}
             <tr>
-                <td>{{ purchase.provider.name}}</td>
-                <td>{{ purchase.provider.email}}</td>
-                <td>{{ purchase.user.name }}</td>
-                <td>{{ purchase.date.strftime('%d/%m/%Y')}}</td>
-                <td>${{ purchase.total}}</td>
+                <td>
+                    <div class="fw-medium text-accent">{{ purchase.provider.name }}</div>
+                </td>
+                <td class="mono text-secondary" style="font-size: 13px;">{{ purchase.provider.email }}</td>
+                <td>
+                    <span class="text-secondary"><i class="bi bi-person me-1"></i>{{ purchase.user.name }}</span>
+                </td>
+                <td class="text-secondary">{{ purchase.date.strftime('%d/%m/%Y') }}</td>
+                <td class="mono text-end fw-bold text-accent">${{ "{:,.2f}".format(purchase.total) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <i class="bi bi-cart-x"></i>
+                        <p>No hay registros de compras realizados.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
-
         </tbody>
     </table>
+</div>
 
-
-    <div class="modal fade" id="modal-purchase">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Nueva Compra</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" id="form-purchase">
-                        <div class="mb-3">
-                            <label class="form-label" for="pur-provider">Proveedor</label>
+<div class="modal fade" id="modal-purchase" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Orden de Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" id="form-purchase">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-8">
+                            <label class="form-label">PROVEEDOR</label>
                             <select id="id_provider" name="id_provider" class="form-select"
                                 hx-get="/purchases/products-by-provider" hx-target="#products-select"
                                 hx-trigger="change" hx-include="[name='id_provider']">
-                                <option value="">Seleccionar proveedor</option>
+                                <option value="">Seleccionar proveedor oficial</option>
                                 {% for provider in providers %}
                                 <option value="{{ provider.id }}">{{ provider.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="pur-date">Fecha De Compra</label>
+                        <div class="col-md-4">
+                            <label class="form-label">FECHA DE RECEPCIÓN</label>
                             <input class="form-control" type="date" name="date" id="pur-date">
                         </div>
+                    </div>
 
-                        <div class="mb-3 d-flex align-items-center gap-3">
-                            <select class="form-select" id="products-select" name="id_product">
-                                <option value="">Primero selecciona un proveedor</option>
-                            </select>
-                            <input id="purchase-quantity" type="number" class="form-control" name="quantity"
-                                placeholder="Cantidad" style="width: 120px;" value="">
-                            <input id="purchase-price" type="number" class="form-control" name="price"
-                                placeholder="Precio" step="0.01" style="width: 120px;" value="">
+                    <div class="p-3 border border-subtle rounded-3 mb-4" style="background: var(--bg-base);">
+                        <label class="form-label d-block mb-3">AÑADIR PRODUCTOS AL LISTADO</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="flex: 2;">
+                                <select class="form-select" id="products-select" name="id_product">
+                                    <option value="">Primero selecciona un proveedor</option>
+                                </select>
+                            </div>
+                            <div style="flex: 0.5;">
+                                <input id="purchase-quantity" type="number" class="form-control mono" name="quantity"
+                                    placeholder="Cant.">
+                            </div>
+                            <div style="flex: 0.7;">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-elevated border-subtle text-muted">$</span>
+                                    <input id="purchase-price" type="number" class="form-control mono" name="price"
+                                        placeholder="Costo" step="0.01">
+                                </div>
+                            </div>
                             <button id="add_product_btn" onclick="addToCart()" type="button"
-                                class="btn btn-sm btn-primary-custom" style="white-space: nowrap;">
-                                + Agregar
+                                class="btn-primary-custom px-3">
+                                <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
+                    </div>
 
-                        <div>
-                            <table class="table table-hover table-dark"
-                                style="border: 2px solid #2a2a4a; border-radius: 8px;">
-                                <thead style="border-bottom: 2px solid #7F77DD;">
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio</th>
-                                        <th>Subtotal</th>
-                                        <th>Eliminar</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="purchase-cart">
+                    <div class="table-wrapper mb-3" style="max-height: 300px; overflow-y: auto; padding: 0.5rem;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>P. Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th class="text-end"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchase-cart">
+                            </tbody>
+                        </table>
+                    </div>
 
-                                </tbody>
-                            </table>
-
-                            <div class="mb-3 text-end">
-                                <label style="color:white" class="h4" id="purchase-total">Total: $0.00</label>
-                            </div>
-
+                    <div
+                        class="d-flex justify-content-between align-items-center bg-elevated p-3 rounded-3 border border-subtle">
+                        <span class="text-secondary fw-medium">RESUMEN DE COMPRA</span>
+                        <div class="text-end">
+                            <span class="text-muted me-2 small">TOTAL</span>
+                            <span class="h4 mono text-accent mb-0" id="purchase-total">$0.00</span>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn btn-primary-custom" onclick="createPurchase()">Guardar</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button data-bs-dismiss="modal" class="btn-ghost px-4">Cancelar</button>
+                <button class="btn-primary-custom px-5" onclick="createPurchase()">Confirmar Compra</button>
             </div>
         </div>
     </div>
-    <script>
-        let cart = [];
-
-        function addToCart() {
-            const select = document.getElementById('products-select');
-            const selectedOption = select.options[select.selectedIndex];
-
-            const id = select.value;
-            const name = selectedOption.dataset.name;
-            const price = document.getElementById('purchase-price').value
-            const quantity = document.getElementById('purchase-quantity').value
-            const date = document.getElementById('pur-date').value
-
-            if (!id || !quantity || quantity <= 0 || price <= 0 || !date) {
-                alert('Por favor complete todos los campos');
-                return;
-            }
-
-            const existing = cart.find(product => product.id === id)
-
-            if (existing) {
-                existing.quantity = Number(existing.quantity) + Number(quantity);
-            }
-            else {
-                cart.push({ id, name, price, quantity });
-            }
-            renderCart(cart);
-        }
-
-
-        function renderCart() {
-
-            purchaseCart = document.getElementById('purchase-cart')
-            purchaseCart.innerHTML = ""
-            const total = cart.reduce((sum, product) => sum + (product.price * product.quantity), 0);
-
-            cart.forEach(product => {
-                purchaseCart.innerHTML += `
-                    <tr>
-                    <td>${product.name}</td >
-                    <td>${product.quantity}</td>
-                    <td>${product.price}</td>
-                    <td>${(product.price * product.quantity).toFixed(2)}</td>
-                    <td>
-                        <button type="button" onclick="removeFromCart(${product.id})" class="btn btn-sm btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr >
-                `;
-
-            });
-            document.getElementById('purchase-total').innerText = `Total: $${total.toFixed(2)}`;
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(product => Number(product.id) !== Number(id));
-            renderCart()
-        }
-
-
-        async function createPurchase() {
-            date = document.getElementById('pur-date').value
-            id_provider = document.getElementById('id_provider').value
-
-            if (!id_provider || cart.length === 0) {
-                alert('Selecciona un provedor y minimo un producto')
-                return
-            }
-            const response = await fetch('/purchases/create', {
-
-
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    date: date,
-                    id_provider: id_provider,
-                    products: cart.map(product => ({
-                        id: product.id,
-                        quantity: product.quantity,
-                        price: product.price
-                    }))
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert(data.message)
-                cart = [];
-                renderCart();
-                window.location.reload()
-
-            }
-            else {
-                alert(data.message)
-            }
-
-
-
-
-        }
-
-    </script>
-
 </div>
 
+<script>
+    let cart = [];
 
+    function addToCart() {
+        const select = document.getElementById('products-select');
+        const selectedOption = select.options[select.selectedIndex];
+
+        const id = select.value;
+        const name = selectedOption.dataset.name;
+        const price = document.getElementById('purchase-price').value;
+        const quantity = document.getElementById('purchase-quantity').value;
+        const date = document.getElementById('pur-date').value;
+
+        if (!id || !quantity || quantity <= 0 || price <= 0 || !date) {
+            alert('Por favor complete todos los campos (incluyendo fecha)');
+            return;
+        }
+
+        const existing = cart.find(product => product.id === id);
+
+        if (existing) {
+            existing.quantity = Number(existing.quantity) + Number(quantity);
+            existing.price = price; // Actualiza al último precio ingresado
+        } else {
+            cart.push({ id, name, price, quantity });
+        }
+        renderCart();
+
+        // Limpiar inputs de producto
+        document.getElementById('purchase-quantity').value = "";
+        document.getElementById('purchase-price').value = "";
+    }
+
+    function renderCart() {
+        const purchaseCart = document.getElementById('purchase-cart');
+        purchaseCart.innerHTML = "";
+        const total = cart.reduce((sum, product) => sum + (product.price * product.quantity), 0);
+
+        if (cart.length === 0) {
+            purchaseCart.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No hay productos en la lista</td></tr>`;
+        }
+
+        cart.forEach(product => {
+            purchaseCart.innerHTML += `
+                <tr>
+                    <td class="fw-medium text-primary">${product.name}</td>
+                    <td class="mono">${product.quantity}</td>
+                    <td class="mono">$${Number(product.price).toFixed(2)}</td>
+                    <td class="mono fw-bold text-primary">$${(product.price * product.quantity).toFixed(2)}</td>
+                    <td class="text-end">
+                        <button type="button" onclick="removeFromCart(${product.id})" class="btn-danger-soft p-1 px-2">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+        document.getElementById('purchase-total').innerText = `$${total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(product => Number(product.id) !== Number(id));
+        renderCart();
+    }
+
+    async function createPurchase() {
+        const date = document.getElementById('pur-date').value;
+        const id_provider = document.getElementById('id_provider').value;
+
+        if (!id_provider || cart.length === 0) {
+            alert('Selecciona un proveedor y al menos un producto');
+            return;
+        }
+
+        const response = await fetch('/purchases/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                date: date,
+                id_provider: id_provider,
+                products: cart.map(product => ({
+                    id: product.id,
+                    quantity: product.quantity,
+                    price: product.price
+                }))
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message);
+        }
+    }
+</script>
 {% endblock %}

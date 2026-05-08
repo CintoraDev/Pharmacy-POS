@@ -1,163 +1,221 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<div class="p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Productos</h4>
-        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-add">
-            <i class="bi bi-square-plus me-1"></i> Agregar Producto
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="section-title">Catálogo de Productos</h1>
+            <p class="section-sub">Gestiona el inventario, precios y proveedores de la farmacia</p>
+        </div>
+        <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modal-add">
+            <i class="bi bi-plus-lg me-2"></i>Agregar Producto
         </button>
     </div>
+</div>
 
-    <div class="mb-3">
-        <input type="text" class="form-control mb-2" placeholder="Buscar Producto...">
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text bg-elevated border-end-0 border-subtle" style="color: var(--text-muted);">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" placeholder="Buscar por nombre o descripción...">
+        </div>
+    </div>
+    <div class="col-md-3">
         <select name="id_category" class="form-select" id="filter-category">
-            <option value="">Seleccionar categoría</option>
+            <option value="">Todas las categorías</option>
             {% for category in product_categories %}
             <option value="{{ category.id }}">{{ category.name }}</option>
             {% endfor %}
         </select>
     </div>
+</div>
 
-    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
-        <thead style="border-bottom: 2px solid #7F77DD;">
+<div class="table-wrapper">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Precio Venta</th>
-                <th>Precio Compra</th>
-                <th>Stock</th>
-                <th>Proveedor</th>
-                <th>Unidad</th>
-                <th>Acciones</th>
+                <th>Producto</th>
+                <th class="text-end">Precio Venta</th>
+                <th class="text-end">Precio Compra</th>
+                <th class="text-center">Stock</th>
+                <th>Proveedor / Unidad</th>
+                <th class="text-end">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
             <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price_sale }}</td>
-                <td>{{ product.price_purchase }}</td>
-                <td>{{ product.stock }}</td>
-                <td>{{ product.provider.name if product.provider else '—' }}</td>
-                <td>{{ product.unit }}</td>
                 <td>
-                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                        data-bs-target="#modal-edit-{{ product.id }}">Editar</button>
-                    <form method="POST" action="{{ url_for('products.desactivate', id=product.id) }}">
-                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                    </form>
+                    <div class="fw-bold text-white">{{ product.name }}</div>
+                    <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{ product.description or
+                        'Sin descripción' }}</small>
+                </td>
+                <td class="mono text-end text-accent fw-bold">${{ "{:,.2f}".format(product.price_sale) }}</td>
+                <td class="mono text-end text-secondary">${{ "{:,.2f}".format(product.price_purchase) }}</td>
+                <td class="text-center">
+                    <span
+                        class="status-badge {{ 'status-active' if (product.stock or 0) > 10 else 'status-inactive' }}">
+                        {{ product.stock if product.stock is not none else 0 }} {{ product.unit }}
+                    </span>
+                </td>
+                <td>
+                    <div class="text-primary fw-medium" style="font-size: 13px;">{{ product.provider.name if
+                        product.provider else '—' }}</div>
+                    <div class="text-muted small" style="letter-spacing: 0.05em;">UNIDAD: {{ product.unit }}</div>
+                </td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn-ghost p-2" data-bs-toggle="modal"
+                            data-bs-target="#modal-edit-{{ product.id }}" title="Editar">
+                            <i class="bi bi-pencil-square text-primary"></i>
+                        </button>
+                        <form method="POST" action="{{ url_for('products.desactivate', id=product.id) }}"
+                            onsubmit="return confirm('¿Desactivar este producto?')">
+                            <button type="submit" class="btn-ghost p-2" title="Desactivar">
+                                <i class="bi bi-trash3 text-danger"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">
+                    <div class="empty-state">
+                        <i class="bi bi-capsule"></i>
+                        <p>No hay productos registrados en el inventario.</p>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
 
-    <div class="modal fade" id="modal-add">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('products.create') }}" id="form-product">
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-name">Nombre</label>
-                            <input class="form-control" type="text" name="name" id="prod-name">
+<div class="modal fade" id="modal-add" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" action="{{ url_for('products.create') }}" id="form-product">
+                    <div class="mb-3">
+                        <label class="form-label">NOMBRE DEL PRODUCTO</label>
+                        <input class="form-control" type="text" name="name" id="prod-name"
+                            placeholder="Ej: Paracetamol 500mg">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">DESCRIPCIÓN</label>
+                        <textarea class="form-control" name="description" id="prod-description" rows="2"
+                            placeholder="Detalles adicionales..."></textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">PRECIO VENTA</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input class="form-control mono" type="number" name="price_sale" step="0.01"
+                                    id="prod-price-sale">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-description">Descripción</label>
-                            <textarea class="form-control" name="description" id="prod-description"></textarea>
+                        <div class="col-6">
+                            <label class="form-label">PRECIO COMPRA</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input class="form-control mono" type="number" name="price_purchase" step="0.01"
+                                    id="prod-price-purchase">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-price-sale">Precio de Venta</label>
-                            <input class="form-control" type="number" name="price_sale" step="0.01"
-                                id="prod-price-sale">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PROVEEDOR OFICIAL</label>
+                        <select name="id_provider" class="form-select" id="prod-provider">
+                            <option value="">Seleccionar proveedor</option>
+                            {% for provider in providers %}
+                            <option value="{{ provider.id }}">{{ provider.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label">UNIDAD</label>
+                            <input class="form-control" type="text" name="unit" id="prod-unit"
+                                placeholder="Unidad de Medida">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-price-purchase">Precio de Compra</label>
-                            <input class="form-control" type="number" name="price_purchase" step="0.01"
-                                id="prod-price-purchase">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-provider">Proveedor</label>
-                            <select name="id_provider" class="form-select" id="prod-provider">
-                                <option value="">Seleccionar proveedor</option>
-                                {% for provider in providers %}
-                                <option value="{{ provider.id }}">{{ provider.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-unit">Unidad de medida</label>
-                            <input class="form-control" type="text" name="unit" id="prod-unit">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="prod-category">Categoría</label>
+                        <div class="col-6">
+                            <label class="form-label">CATEGORÍA</label>
                             <select name="id_category" class="form-select" id="prod-category">
-                                <option value="">Seleccionar categoría</option>
+                                <option value="">Seleccionar</option>
                                 {% for category in product_categories %}
                                 <option value="{{ category.id }}">{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-primary-custom" form="form-product">Guardar</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn-primary-custom px-4" form="form-product">Guardar Producto</button>
             </div>
         </div>
     </div>
+</div>
 
-    {% for product in products %}
-    <div class="modal fade" id="modal-edit-{{ product.id }}">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('products.update', id=product.id) }}"
-                        id="form-product-{{ product.id }}">
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input class="form-control" type="text" name="name" value="{{ product.name }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <textarea class="form-control" name="description">{{ product.description }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio de Venta</label>
-                            <input class="form-control" type="number" name="price_sale" step="0.01"
+{% for product in products %}
+<div class="modal fade" id="modal-edit-{{ product.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" action="{{ url_for('products.update', id=product.id) }}"
+                    id="form-product-{{ product.id }}">
+                    <div class="mb-3">
+                        <label class="form-label">NOMBRE</label>
+                        <input class="form-control" type="text" name="name" value="{{ product.name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">DESCRIPCIÓN</label>
+                        <textarea class="form-control" name="description" rows="2">{{ product.description }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">PRECIO VENTA</label>
+                            <input class="form-control mono" type="number" name="price_sale" step="0.01"
                                 value="{{ product.price_sale }}">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Precio de Compra</label>
-                            <input class="form-control" type="number" name="price_purchase" step="0.01"
+                        <div class="col-6">
+                            <label class="form-label">PRECIO COMPRA</label>
+                            <input class="form-control mono" type="number" name="price_purchase" step="0.01"
                                 value="{{ product.price_purchase }}">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Proveedor</label>
-                            <select name="id_provider" class="form-select">
-                                <option value="">Seleccionar proveedor</option>
-                                {% for provider in providers %}
-                                <option value="{{ provider.id }}" {% if product.id_provider==provider.id %}selected{%
-                                    endif %}>
-                                    {{ provider.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Unidad de medida</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PROVEEDOR</label>
+                        <select name="id_provider" class="form-select">
+                            <option value="">Seleccionar proveedor</option>
+                            {% for provider in providers %}
+                            <option value="{{ provider.id }}" {% if product.id_provider==provider.id %}selected{% endif
+                                %}>
+                                {{ provider.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label">UNIDAD</label>
                             <input class="form-control" type="text" name="unit" value="{{ product.unit }}">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Categoría</label>
+                        <div class="col-6">
+                            <label class="form-label">CATEGORÍA</label>
                             <select name="id_category" class="form-select">
                                 <option value="">Seleccionar categoría</option>
                                 {% for category in product_categories %}
@@ -168,16 +226,15 @@
                                 {% endfor %}
                             </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-primary-custom" form="form-product-{{ product.id }}">Guardar</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn-primary-custom px-4" form="form-product-{{ product.id }}">Actualizar</button>
             </div>
         </div>
     </div>
-    {% endfor %}
-
 </div>
+{% endfor %}
 {% endblock %}

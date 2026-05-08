@@ -1,158 +1,262 @@
 {% extends "base.html" %}
 {% block contenido %}
+
+<div class="section-header">
+    <h1 class="section-title">Ventas</h1>
+    <p class="section-sub">Registro de ventas y punto de venta</p>
+</div>
+
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#new-sale">Nueva Venta</a>
+        <a class="nav-link active" data-bs-toggle="tab" href="#new-sale">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Venta
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#history-sales">Historial</a>
+        <a class="nav-link" data-bs-toggle="tab" href="#history-sales">
+            <i class="bi bi-clock-history me-1"></i> Historial
+        </a>
     </li>
 </ul>
-<div class="tab-content">
-    <div class="tab-pane active" id="new-sale">
-        <div class="p-4">
-            <h4 class="text-white mb-3">Ventas</h4>
-            <div class="row g-3">
 
-                <div class="col-md-6">
-                    <div class="card p-3">
+<div class="tab-content">
+
+    <!-- ── NUEVA VENTA ── -->
+    <div class="tab-pane active" id="new-sale">
+        <div class="row g-3">
+
+            <!-- Buscador de productos -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="p-3" style="border-bottom:1px solid var(--border);">
+                        <p
+                            style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin:0;">
+                            <i class="bi bi-search me-1"></i> Buscar producto
+                        </p>
+                    </div>
+                    <div class="p-3">
                         <input class="form-control mb-3" type="text" id="product-search"
-                            placeholder="Buscar producto...">
-                        <p class="text-white">Resultados:</p>
-                        <table class="table table-hover table-dark">
-                            <tbody id="search-results">
-                            </tbody>
-                        </table>
+                            placeholder="Nombre, código o categoría...">
+
+                        <div class="table-wrapper">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Stock</th>
+                                        <th>Precio</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="search-results">
+                                    <tr>
+                                        <td colspan="4"
+                                            style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">
+                                            <i class="bi bi-search"
+                                                style="font-size:20px;display:block;margin-bottom:6px;"></i>
+                                            Escribe para buscar productos
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <div class="card p-3">
+            <!-- Carrito -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="p-3"
+                        style="border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                        <p
+                            style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin:0;">
+                            <i class="bi bi-cart3 me-1"></i> Carrito de venta
+                        </p>
+                        <span id="cart-count"
+                            style="font-size:11px;background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:10px;font-family:var(--font-mono);">0
+                            items</span>
+                    </div>
+
+                    <div class="p-3">
+                        <!-- Cliente -->
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <label class="form-label mb-0">Cliente</label>
+                            <label class="form-label mb-0" style="white-space:nowrap;">Cliente</label>
                             <select id="customer-select" name="customers" class="form-select">
-                                <option disabled selected>Seleccionar</option>
+                                <option disabled selected>Seleccionar cliente...</option>
                                 {% for customer in customers %}
                                 <option value="{{ customer.id }}">{{ customer.name }}</option>
                                 {% endfor %}
                             </select>
-                            <button class="btn btn-sm btn-primary-custom px-3" data-bs-toggle="modal"
-                                data-bs-target="#modal-customer">
+                            <button class="btn-primary-custom btn" style="padding:7px 12px;white-space:nowrap;"
+                                data-bs-toggle="modal" data-bs-target="#modal-customer" title="Agregar cliente">
                                 <i class="bi bi-person-plus"></i>
                             </button>
                         </div>
 
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio</th>
-                                    <th>Eliminar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cart-table">
-                            </tbody>
-                        </table>
+                        <!-- Tabla carrito -->
+                        <div class="table-wrapper mb-3">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th style="text-align:center;">Cant.</th>
+                                        <th style="text-align:right;">Precio</th>
+                                        <th style="text-align:right;">Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-table">
+                                    <tr id="empty-cart-row">
+                                        <td colspan="5"
+                                            style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">
+                                            <i class="bi bi-cart"
+                                                style="font-size:20px;display:block;margin-bottom:6px;"></i>
+                                            El carrito está vacío
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                        <div class="p-2 mt-2 rounded" style="background-color: #0f0f1a;">
-                            <div class="d-flex justify-content-between text-white">
-                                <span>Subtotal:</span><span id="subtotal-value">$0.00</span>
+                        <!-- Totales -->
+                        <div
+                            style="background:var(--bg-base);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:14px;">
+                            <div class="d-flex justify-content-between" style="margin-bottom:7px;">
+                                <span style="color:var(--text-muted);font-size:13px;">Subtotal</span>
+                                <span id="subtotal-value" class="mono"
+                                    style="font-size:13px;color:var(--text-secondary);">$0.00</span>
                             </div>
-                            <div class="d-flex justify-content-between text-white">
-                                <span>Descuento:</span><span id="discount-value">$0.00</span>
+                            <div class="d-flex justify-content-between" style="margin-bottom:10px;">
+                                <span style="color:var(--text-muted);font-size:13px;">Descuento</span>
+                                <span id="discount-value" class="mono"
+                                    style="font-size:13px;color:var(--accent);">-$0.00</span>
                             </div>
-                            <hr style="border-color: #2a2a4a;">
-                            <div class="d-flex justify-content-between text-white">
-                                <strong>Total:</strong><strong id="total-value">$0.00</strong>
+                            <div style="border-top:1px solid var(--border);padding-top:10px;"
+                                class="d-flex justify-content-between">
+                                <span style="font-weight:600;font-size:14px;color:var(--text-primary);">Total</span>
+                                <span id="total-value" class="mono"
+                                    style="font-weight:700;font-size:17px;color:var(--text-primary);">$0.00</span>
                             </div>
                         </div>
 
-                        <button class="btn btn-primary-custom w-100 mt-2" onclick="createSale()" id="finish-sale-btn">
-                            Finalizar Venta
+                        <button class="btn btn-primary-custom w-100" onclick="createSale()" id="finish-sale-btn"
+                            style="padding:10px;font-size:14px;border-radius:var(--radius-md);">
+                            <i class="bi bi-check-circle me-2"></i> Finalizar Venta
                         </button>
                     </div>
                 </div>
             </div>
+
         </div>
-
-
-
-
     </div>
+
+    <!-- ── HISTORIAL ── -->
     <div class="tab-pane" id="history-sales">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 style="font-size:15px;font-weight:600;color:var(--text-primary);margin:0;">Historial de ventas</h2>
+            <span style="font-size:12px;color:var(--text-muted);">{{ sales|length }} registros</span>
+        </div>
 
-        <div class="p-4" id="history-sales">
-            <h4 class="text-white mb-3">Historial de Ventas</h4>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Subtotal</th>
-                            <th>Descuento</th>
-                            <th>Total</th>
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for sale in sales %}
-                        <tr>
-                            <td>{{sale.date.strftime('%d/%m/%Y') }}</td>
-                            <td>{{sale.customer.name}}</td>
-                            <td>{{sale.subtotal}}</td>
-                            <td>{{sale.discount}}</td>
-                            <td>{{sale.total}}</td>
-                            <td>
-                                <button class="btn btn-sm btn-success" onclick="generateInvoice({{sale.id}})">
-                                    <i class="bi bi-eye"></i> Generar Factura
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th style="text-align:right;">Subtotal</th>
+                        <th style="text-align:right;">Descuento</th>
+                        <th style="text-align:right;">Total</th>
+                        <th style="text-align:center;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td class="mono" style="color:var(--text-muted);font-size:12px;">#{{ sale.id }}</td>
+                        <td style="color:var(--text-secondary);">{{ sale.date.strftime('%d %b %Y') }}</td>
+                        <td style="font-weight:500;">{{ sale.customer.name }}</td>
+                        <td class="mono" style="text-align:right;color:var(--text-secondary);">${{
+                            "%.2f"|format(sale.subtotal) }}</td>
+                        <td class="mono" style="text-align:right;color:var(--accent);">-${{ "%.2f"|format(sale.discount)
+                            }}</td>
+                        <td class="mono" style="text-align:right;font-weight:600;">${{ "%.2f"|format(sale.total) }}</td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-success-soft btn-sm" onclick="generateInvoice({{ sale.id }})">
+                                <i class="bi bi-file-earmark-text me-1"></i> Factura
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not sales %}
+                    <tr>
+                        <td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
+                            <i class="bi bi-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+                            No hay ventas registradas
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </div>
+
 </div>
 
 {% include 'customers/modal_add.html' %}
+
 <script>
     const searchInput = document.getElementById('product-search');
     const searchResults = document.getElementById('search-results');
-
     let debounceTimer;
 
     searchInput.addEventListener('input', () => {
         clearTimeout(debounceTimer);
-
         debounceTimer = setTimeout(async () => {
             const q = searchInput.value;
-
             if (q.length < 2) {
-                searchResults.innerHTML = '';
+                searchResults.innerHTML = `
+                    <tr><td colspan="4" style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">
+                        <i class="bi bi-search" style="font-size:20px;display:block;margin-bottom:6px;"></i>
+                        Escribe para buscar productos
+                    </td></tr>`;
                 return;
             }
 
             const response = await fetch(`/sales/search?q=${q}`);
             const data = await response.json();
-
             searchResults.innerHTML = '';
 
-            data.forEach(product => {
-                searchResults.innerHTML += `
-                        <tr>
-                            <td>${product.name}</td>
-                            <td>Stock: ${product.stock}</td>
-                            <td>$${product.price}</td>
-                            <td><button class="btn btn-sm btn-primary-custom" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})">+ Agregar</button></td>
-                        </tr>
-                    `;
-            });
+            if (data.length === 0) {
+                searchResults.innerHTML = `
+                    <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">
+                        Sin resultados para "${q}"
+                    </td></tr>`;
+                return;
+            }
 
+            data.forEach(product => {
+                const stockColor = product.stock <= 5 ? 'var(--danger)' : product.stock <= 15 ? 'var(--warning)' : 'var(--accent)';
+                const stockBg = product.stock <= 5 ? 'rgba(255,94,94,0.1)' : product.stock <= 15 ? 'rgba(240,165,0,0.1)' : 'var(--accent-dim)';
+                searchResults.innerHTML += `
+                    <tr>
+                        <td style="font-weight:500;">${product.name}</td>
+                        <td>
+                            <span style="font-size:11px;background:${stockBg};color:${stockColor};padding:2px 7px;border-radius:10px;font-family:var(--font-mono);">
+                                ${product.stock}
+                            </span>
+                        </td>
+                        <td class="mono" style="color:var(--text-secondary);">$${product.price}</td>
+                        <td>
+                            <button class="btn btn-primary-custom btn-sm"
+                                onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.stock})"
+                                style="font-size:12px;padding:4px 10px;">
+                                <i class="bi bi-plus"></i> Agregar
+                            </button>
+                        </td>
+                    </tr>`;
+            });
         }, 300);
     });
 </script>
@@ -162,44 +266,74 @@
 
     document.getElementById('customer-select').addEventListener('change', updateTotals);
 
+    function updateCartCount() {
+        const total = cart.reduce((s, i) => s + i.quantity, 0);
+        document.getElementById('cart-count').textContent = `${total} item${total !== 1 ? 's' : ''}`;
+    }
+
     function addToCart(id, name, price, stock) {
         const existing = cart.find(item => item.id === id);
-
         if (existing) {
-            if (existing.quantity >= existing.stock) {
-                alert("No hay suficiente stock");
-                return;
-            }
+            if (existing.quantity >= existing.stock) { alert("No hay suficiente stock"); return; }
             existing.quantity += 1;
-            renderCart();
         } else {
-            if (stock <= 0) {
-                alert("No hay suficiente stock");
-                return;
-            }
+            if (stock <= 0) { alert("No hay suficiente stock"); return; }
             cart.push({ id, name, price, stock, quantity: 1 });
-            renderCart();
         }
+        renderCart();
     }
 
     async function renderCart() {
         const cartTable = document.querySelector("#cart-table");
         cartTable.innerHTML = "";
 
+        if (cart.length === 0) {
+            cartTable.innerHTML = `
+                <tr id="empty-cart-row">
+                    <td colspan="5" style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">
+                        <i class="bi bi-cart" style="font-size:20px;display:block;margin-bottom:6px;"></i>
+                        El carrito está vacío
+                    </td>
+                </tr>`;
+            updateCartCount();
+            await updateTotals();
+            return;
+        }
+
         cart.forEach(item => {
+            const lineTotal = (item.price * item.quantity).toFixed(2);
             cartTable.innerHTML += `
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>${item.quantity}
-                            <button class="btn btn-sm btn-primary-custom" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.stock})">+</button>
-                        </td>
-                        <td>$${item.price}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})"><i class="bi bi-trash"></i></button></td>
-                    </tr>
-                `;
+                <tr>
+                    <td style="font-weight:500;">${item.name}</td>
+                    <td style="text-align:center;">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:5px;">
+                            <button class="btn" style="background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary);width:24px;height:24px;padding:0;font-size:13px;border-radius:4px;line-height:1;"
+                                onclick="decreaseQty(${item.id})">−</button>
+                            <span class="mono" style="font-size:13px;min-width:20px;text-align:center;">${item.quantity}</span>
+                            <button class="btn" style="background:var(--bg-hover);border:1px solid var(--border);color:var(--text-secondary);width:24px;height:24px;padding:0;font-size:13px;border-radius:4px;line-height:1;"
+                                onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.stock})">+</button>
+                        </div>
+                    </td>
+                    <td class="mono" style="text-align:right;color:var(--text-secondary);">$${item.price}</td>
+                    <td class="mono" style="text-align:right;font-weight:500;">$${lineTotal}</td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-danger-soft btn-sm" onclick="removeFromCart(${item.id})" style="padding:3px 8px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
         });
 
+        updateCartCount();
         await updateTotals();
+    }
+
+    function decreaseQty(id) {
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+        if (item.quantity <= 1) { removeFromCart(id); return; }
+        item.quantity -= 1;
+        renderCart();
     }
 
     function removeFromCart(id) {
@@ -209,11 +343,9 @@
 
     async function updateTotals() {
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
         document.getElementById('subtotal-value').textContent = `$${subtotal.toFixed(2)}`;
 
         const customer = document.getElementById('customer-select').value;
-
         if (!customer || isNaN(customer)) {
             document.getElementById('discount-value').textContent = `-$0.00`;
             document.getElementById('total-value').textContent = `$${subtotal.toFixed(2)}`;
@@ -222,7 +354,6 @@
 
         const response = await fetch(`/customers/points/${customer}`);
         const data = await response.json();
-
         const applyDiscount = data.points >= 50;
         const discountAmount = applyDiscount ? subtotal * 0.10 : 0;
         const totalFinal = subtotal - discountAmount;
@@ -234,67 +365,52 @@
 
     async function createSale() {
         const customer = document.getElementById('customer-select').value;
-
         if (!customer || isNaN(customer) || cart.length === 0) {
             alert('Debe seleccionar un cliente y al menos un producto');
             return;
         }
-
         try {
             const response = await fetch('/sales/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     customer_id: customer,
-                    items: cart.map(item => ({
-                        id: item.id,
-                        quantity: item.quantity
-                    }))
+                    items: cart.map(item => ({ id: item.id, quantity: item.quantity }))
                 })
             });
-
             const data = await response.json();
-
             if (data.success) {
                 alert(data.message);
                 cart = [];
                 renderCart();
                 document.getElementById('customer-select').selectedIndex = 0;
-                document.getElementById('search-results').innerHTML = '';
+                document.getElementById('search-results').innerHTML = `
+                    <tr><td colspan="4" style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">
+                        <i class="bi bi-search" style="font-size:20px;display:block;margin-bottom:6px;"></i>
+                        Escribe para buscar productos
+                    </td></tr>`;
             } else {
                 alert(data.message);
             }
-
         } catch (error) {
             console.error(error);
             alert('Ocurrió un error al procesar la venta');
         }
     }
-</script>
 
-
-
-<script>
     async function generateInvoice(saleId) {
         try {
             const response = await fetch(`/sales/invoices/create`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    sale_id: saleId
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sale_id: saleId })
             });
             const data = await response.json();
             if (data.success) {
-                window.open(`/sales/invoices/${data.invoice_id}`, '_blank')
+                window.open(`/sales/invoices/${data.invoice_id}`, '_blank');
             } else {
                 alert(data.message);
             }
-
         } catch (error) {
             console.error(error);
             alert('Ocurrió un error al generar la factura');
@@ -302,5 +418,4 @@
     }
 </script>
 
-</div>
 {% endblock %}

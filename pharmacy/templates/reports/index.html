@@ -2,36 +2,56 @@
 
 {% block contenido %}
 <style>
+    /* Estilos para las pestañas alineados al sistema */
     .nav-tabs {
-        border-bottom: 1px solid #2a2a4a;
+        border-bottom: 1px solid var(--border);
+        gap: 8px;
+        margin-bottom: 2rem;
     }
 
     .nav-tabs .nav-link {
-        color: #9090b0;
+        color: var(--text-muted);
         border: none;
         border-bottom: 2px solid transparent;
-        border-radius: 0;
-    }
-
-    .nav-tabs .nav-link:hover {
-        color: white;
-        border-bottom: 2px solid #7F77DD;
+        padding: 12px 20px;
+        font-weight: 500;
+        transition: all 0.2s;
     }
 
     .nav-tabs .nav-link.active {
         background-color: transparent;
-        color: white;
-        border-bottom: 2px solid #7F77DD;
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
     }
 </style>
 
-<div class="p-4">
-    <div class="mb-4">
-        <h4 class="text-white">Reportes</h4>
+<div class="section-header">
+    <div>
+        <h1 class="section-title">Reportes</h1>
+        <p class="section-sub">Consulta de registros históricos</p>
     </div>
+</div>
 
-    <div class="card" style="background-color: #16213e; border-color: #2a2a4a;">
-        <ul class="nav nav-tabs px-3 pt-3" id="reportTabs">
+<div class="card mb-4">
+    <div class="card-body p-4">
+
+        <div class="d-flex gap-3 align-items-end mb-4">
+            <div style="flex: 1;">
+                <label class="form-label">FECHA INICIO</label>
+                <input type="date" class="form-control" name="start_date">
+            </div>
+            <div style="flex: 1;">
+                <label class="form-label">FECHA FIN</label>
+                <input type="date" class="form-control" name="end_date">
+            </div>
+            <div style="flex: 0.5;">
+                <button class="btn-primary-custom w-100 py-2">
+                    <i class="bi bi-search me-1"></i> Generar
+                </button>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="reportTabs">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#sales">
                     <i class="bi bi-cart me-1"></i> Ventas
@@ -54,147 +74,127 @@
             </li>
         </ul>
 
-        <div class="card-body">
-
-            <div class="d-flex gap-3 align-items-end mb-4">
-                <div>
-                    <label class="form-label text-white">Fecha inicio</label>
-                    <input type="date" class="form-control" name="start_date">
-                </div>
-                <div>
-                    <label class="form-label text-white">Fecha fin</label>
-                    <input type="date" class="form-control" name="end_date">
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-primary-custom px-5 py-2">
-                        <i class="bi bi-search me-1"></i> Generar
-                    </button>
-                </div>
-            </div>
-
-            <div class="tab-content">
-
-                <div class="tab-pane active show" id="sales">
-                    <table class="table table-hover table-dark"
-                        style="border: 2px solid #2a2a4a; border-radius: 8px;">
-                        <thead style="border-bottom: 2px solid #7F77DD;">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="sales">
+                <div class="table-wrapper">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>Medicamento</th>
-                                <th>Total</th>
+                                <th class="text-end">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>001</td>
-                                <td>21/04/2026</td>
+                                <td class="mono">001</td>
+                                <td class="text-secondary">21/04/2026</td>
                                 <td>Carlos Cintora</td>
                                 <td>Paracetamol</td>
-                                <td>$168.00</td>
+                                <td class="mono text-end text-accent fw-bold">$168.00</td>
                             </tr>
                             <tr>
-                                <td>002</td>
-                                <td>21/04/2026</td>
+                                <td class="mono">002</td>
+                                <td class="text-secondary">21/04/2026</td>
                                 <td>Alexis Gonzalez</td>
                                 <td>Ibuprofeno</td>
-                                <td>$52.50</td>
+                                <td class="mono text-end text-accent fw-bold">$52.50</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                <div class="tab-pane" id="purchases">
-                    <table class="table table-hover table-dark"
-                        style="border: 2px solid #2a2a4a; border-radius: 8px;">
-                        <thead style="border-bottom: 2px solid #7F77DD;">
+            <div class="tab-pane fade" id="purchases">
+                <div class="table-wrapper">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Proveedor</th>
-                                <th>Fecha De Compra</th>
-                                <th>Total</th>
+                                <th>Fecha de Compra</th>
+                                <th class="text-end">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>C001</td>
+                                <td class="mono">C001</td>
                                 <td>Farmacias Guadalajara</td>
-                                <td>10/04/2026</td>
-                                <td>$1,500.00</td>
+                                <td class="text-secondary">10/04/2026</td>
+                                <td class="mono text-end fw-bold">$1,500.00</td>
                             </tr>
                             <tr>
-                                <td>C002</td>
+                                <td class="mono">C002</td>
                                 <td>Farmacia Similares</td>
-                                <td>10/04/2026</td>
-                                <td>$1,500.00</td>
+                                <td class="text-secondary">10/04/2026</td>
+                                <td class="mono text-end fw-bold">$1,500.00</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                <div class="tab-pane" id="customers">
-                    <table class="table table-hover table-dark"
-                        style="border: 2px solid #2a2a4a; border-radius: 8px;">
-                        <thead style="border-bottom: 2px solid #7F77DD;">
+            <div class="tab-pane fade" id="customers">
+                <div class="table-wrapper">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>RFC</th>
-                                <th>Fecha De Nacimiento</th>
-                                <th>Puntos</th>
+                                <th>F. Nacimiento</th>
+                                <th class="text-end">Puntos</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Carlos Cintora</td>
-                                <td>CIGC05061</td>
+                                <td class="mono text-secondary">CIGC05061</td>
                                 <td>14/06/2005</td>
-                                <td>90</td>
+                                <td class="text-end"><span class="status-badge"
+                                        style="background: var(--accent-dim); color: var(--accent); border-color: rgba(0,212,170,0.2);">90</span>
+                                </td>
                             </tr>
                             <tr>
                                 <td>Alexis Gonzalez</td>
-                                <td>ALGC05731</td>
+                                <td class="mono text-secondary">ALGC05731</td>
                                 <td>08/09/1998</td>
-                                <td>5</td>
+                                <td class="text-end"><span class="status-badge"
+                                        style="background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border);">5</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                <div class="tab-pane" id="invoices">
-                    <table class="table table-hover table-dark"
-                        style="border: 2px solid #2a2a4a; border-radius: 8px;">
-                        <thead style="border-bottom: 2px solid #7F77DD;">
+            <div class="tab-pane fade" id="invoices">
+                <div class="table-wrapper">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
                                 <th>Folio</th>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>RFC</th>
-                                <th>Total</th>
+                                <th class="text-end">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>F-0001</td>
-                                <td>21/04/2026</td>
+                                <td class="mono text-info">F-0001</td>
+                                <td class="text-secondary">21/04/2026</td>
                                 <td>Carlos Cintora</td>
-                                <td>CIGC05061</td>
-                                <td>$168.00</td>
-                            </tr>
-                            <tr>
-                                <td>F-0002</td>
-                                <td>21/04/2026</td>
-                                <td>Alexis Gonzalez</td>
-                                <td>ALGC05731</td>
-                                <td>$52.50</td>
+                                <td class="mono">CIGC05061</td>
+                                <td class="mono text-end fw-bold text-primary">$168.00</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>
-
 {% endblock %}

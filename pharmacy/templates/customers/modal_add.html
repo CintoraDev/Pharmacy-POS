@@ -1,69 +1,59 @@
-<div class="modal fade" id="modal-customer">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+<div class="modal fade" id="modal-customer" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Agregar Cliente</h5>
+                <h5 class="modal-title">Registrar Nuevo Cliente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <form method="POST" action="{{ url_for('customers.create') }}" id="form-customer">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="cust-name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" name="name" id="cust-name" required>
+                        <div class="col-md-7">
+                            <label class="form-label">NOMBRE COMPLETO</label>
+                            <input type="text" class="form-control" name="name" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-rfc" class="form-label">RFC</label>
-                            <input type="text" class="form-control" name="rfc" id="cust-rfc" required>
+                        <div class="col-md-5">
+                            <label class="form-label">RFC</label>
+                            <input type="text" class="form-control mono" name="rfc" required>
                         </div>
-
                         <div class="col-md-6">
-                            <label for="cust-email" class="form-label">Correo</label>
-                            <input type="email" class="form-control" name="email" id="cust-email">
+                            <label class="form-label">CORREO ELECTRÓNICO</label>
+                            <input type="email" class="form-control" name="email">
                         </div>
-
                         <div class="col-md-6">
-                            <label for="cust-phone" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" name="phone" id="cust-phone">
+                            <label class="form-label">TELÉFONO</label>
+                            <input type="tel" class="form-control" name="phone">
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-address" class="form-label">Dirección</label>
-                            <input type="text" class="form-control" name="address" id="cust-address" required>
+                        <div class="col-12">
+                            <label class="form-label">DIRECCIÓN FISCAL</label>
+                            <input type="text" class="form-control" name="address" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-city" class="form-label">Ciudad</label>
-                            <input type="text" class="form-control" name="city" id="cust-city" required>
+                        <div class="col-md-4">
+                            <label class="form-label">CIUDAD</label>
+                            <input type="text" class="form-control" name="city" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-state" class="form-label">Estado</label>
-                            <input type="text" class="form-control" name="state" id="cust-state" required>
+                        <div class="col-md-4">
+                            <label class="form-label">ESTADO</label>
+                            <input type="text" class="form-control" name="state" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-zip" class="form-label">Código Postal</label>
-                            <input type="text" class="form-control" name="zip_code" id="cust-zip" required>
+                        <div class="col-md-4">
+                            <label class="form-label">CÓDIGO POSTAL</label>
+                            <input type="text" class="form-control mono" name="zip_code" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-fiscal-regimen" class="form-label">Régimen Fiscal</label>
-                            <input type="text" class="form-control" name="fiscal_regimen" id="cust-fiscal-regimen"
-                                required>
+                        <div class="col-md-8">
+                            <label class="form-label">RÉGIMEN FISCAL</label>
+                            <input type="text" class="form-control" name="fiscal_regimen" required>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="cust-birth-date" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" name="birth_date" id="cust-birth-date">
+                        <div class="col-md-4">
+                            <label class="form-label">FECHA NACIMIENTO</label>
+                            <input type="date" class="form-control" name="birth_date">
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                <button class="btn btn-primary-custom" form="form-customer">Guardar</button>
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                <button class="btn-primary-custom px-4" form="form-customer">Guardar Cliente</button>
             </div>
         </div>
     </div>

@@ -1,49 +1,84 @@
 {% extends "base.html" %}
-{% block contenido %}
 
-<div class="p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Clientes</h4>
-        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-customer">
-            <i class="bi bi-person-plus me-1"></i> Agregar Cliente
+{% block contenido %}
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="section-title">Directorio de Clientes</h1>
+            <p class="section-sub">Administra la información fiscal y puntos de lealtad</p>
+        </div>
+        <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modal-customer">
+            <i class="bi bi-person-plus-fill me-2"></i>Agregar Cliente
         </button>
     </div>
+</div>
 
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Buscar Cliente...">
+<div class="row mb-4">
+    <div class="col-md-5">
+        <div class="input-group">
+            <span class="input-group-text bg-elevated border-end-0 border-subtle">
+                <i class="bi bi-search" style="color: var(--text-muted);"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" placeholder="Buscar por nombre o RFC...">
+        </div>
     </div>
+</div>
 
-    <table class="table table-hover table-dark" style="border: 2px solid #2a2a4a; border-radius: 8px;">
-        <thead style="border-bottom: 2px solid #7F77DD;">
+<div class="table-wrapper">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>Nombre</th>
-                <th>RFC</th>
-                <th>Fecha De Nacimiento</th>
-                <th>Puntos</th>
-                <th>Acciones</th>
+                <th>Nombre / RFC</th>
+                <th>Datos de Contacto</th>
+                <th class="text-center">Fecha Nac.</th>
+                <th class="text-center">Puntos</th>
+                <th class="text-end">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {%for customer in customers%}
+            {% for customer in customers %}
             <tr>
-                <td>{{customer.name}}</td>
-                <td>{{customer.rfc}}</td>
-                <td>{{ customer.birth_date.strftime('%d/%m/%Y') if customer.birth_date else '—' }}</td>
-                <td>{{customer.points}}</td>
                 <td>
-                    <button data-bs-toggle="modal" data-bs-target="#modal-edit-{{customer.id}}" class="btn btn-sm btn-warning">Editar</button>
-                   <form action="{{url_for('customers.desactivate', id = customer.id)}}" method="POST">
-                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                    </form>
+                    <div class="fw-bold text-white">{{ customer.name }}</div>
+                    <div class="mono text-accent small" style="font-size: 11px;">{{ customer.rfc }}</div>
+                </td>
+                <td>
+                    <div class="small text-white"><i class="bi bi-envelope me-1 text-muted"></i>{{ customer.email or
+                        'Sin correo' }}</div>
+                    <div class="small text-muted"><i class="bi bi-telephone me-1"></i>{{ customer.phone or '—' }}</div>
+                </td>
+                <td class="text-center">
+                    <span class="text-muted">{{ customer.birth_date.strftime('%d/%m/%Y') if customer.birth_date
+                        else '—'
+                        }}</span>
+                </td>
+                <td class="text-center">
+                    <div class="status-badge status-active"
+                        style="background: rgba(127, 119, 221, 0.1); color: #7F77DD; border-color: rgba(127, 119, 221, 0.2);">
+                        {{ customer.points }} pts
+                    </div>
+                </td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn-ghost p-2" data-bs-toggle="modal"
+                            data-bs-target="#modal-edit-{{ customer.id }}">
+                            <i class="bi bi-pencil-square text-primary"></i>
+                        </button>
+                        <form action="{{ url_for('customers.desactivate', id=customer.id) }}" method="POST"
+                            onsubmit="return confirm('¿Eliminar cliente?')">
+                            <button class="btn-ghost p-2">
+                                <i class="bi bi-trash3 text-danger"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
-            {%endfor%}
+            {% endfor %}
         </tbody>
     </table>
-
-    {% include 'customers/modal_add.html' %}
-    {% include 'customers/modal_edit.html'%}
-
 </div>
+
+{% include 'customers/modal_add.html' %}
+{% include 'customers/modal_edit.html' %}
 
 {% endblock %}

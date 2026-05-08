@@ -1,142 +1,163 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<div class="p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="text-white">Usuarios</h4>
-        <button class="btn btn-sm btn-primary-custom px-5 py-2" data-bs-toggle="modal" data-bs-target="#modal-user">
-            <i class="bi bi-person-plus me-1"></i> Agregar Usuario
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="section-title">Gestión de Usuarios</h1>
+            <p class="section-sub">Administra los accesos y roles del personal</p>
+        </div>
+        <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modal-user">
+            <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
         </button>
     </div>
+</div>
 
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Buscar usuario...">
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text bg-elevated border-end-0"
+                style="border: 1px solid var(--border); color: var(--text-muted);">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" placeholder="Buscar por nombre o correo..."
+                id="userSearch">
+        </div>
     </div>
+</div>
 
-    <table class="table table-hover ms-auto"
-        style="background-color: #6f42c1;color: white; border: 2px solid #2a2a4a; border-radius: 8px;">
-        <thead style="border-bottom: 2px solid #7F77DD;">
+<div class="table-wrapper">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Rol</th>
-                <th>Acciones</th>
+                <th>Usuario</th>
+                <th>Correo Electrónico</th>
+                <th>Rol de Acceso</th>
+                <th class="text-end">Acciones</th>
             </tr>
         </thead>
-
         <tbody>
             {% for user in users %}
             <tr>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
                 <td>
-                    <span class="badge badge-{{ user.rol }}">{{ user.rol | capitalize }}</span>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">
+                            {{ user.name[0].upper() }}
+                        </div>
+                        <span class="fw-medium">{{ user.name }}</span>
+                    </div>
+                </td>
+                <td class="mono text-secondary small">{{ user.email }}</td>
+                <td>
+                    <span class="badge-role badge-{{ user.rol }}">
+                        {{ user.rol | capitalize }}
+                    </span>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                        data-bs-target="#modal-edit-{{ user.id }}">
-                        Editar
-                    </button>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn-ghost p-1 px-2" title="Editar" data-bs-toggle="modal"
+                            data-bs-target="#modal-edit-{{ user.id }}">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
 
-                    <form action="{{url_for('users.desactivate', id = user.id)}}" method="POST">
-                        <button class="btn btn-sm btn-danger">Eliminar</button>
-                    </form>
+                        <form action="{{url_for('users.desactivate', id = user.id)}}" method="POST" class="d-inline">
+                            <button class="btn-danger-soft p-1 px-2" title="Desactivar"
+                                onclick="return confirm('¿Seguro que desea eliminar este usuario?')">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    {% for user in users %}
-    <div class="modal fade" id="modal-edit-{{ user.id }}">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('users.update', id = user.id) }}"
-                        id="form-edit-user-{{ user.id }}">
-                        <div class="mb-3">
-                            <label class="form-label" for="user-name-{{ user.id }}">Nombre</label>
-                            <input class="form-control" type="text" name="name" id="user-name-{{ user.id }}"
-                                value="{{ user.name }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-email-{{ user.id }}">Correo</label>
-                            <input class="form-control" type="email" name="email" id="user-email-{{ user.id }}"
-                                value="{{ user.email }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-rol-{{ user.id }}">Rol</label>
-                            <select name="rol" class="form-select" id="user-rol-{{ user.id }}">
-                                <option value="admin" {% if user.rol=='admin' %}selected{% endif %}>Admin
-                                </option>
-                                <option value="encargado" {% if user.rol=='encargado' %}selected{% endif %}>
-                                    Encargado</option>
-                                <option value="gerente" {% if user.rol=='gerente' %}selected{% endif %}>
-                                    Gerente</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-password-{{ user.id }}">Contraseña</label>
-                            <input class="form-control" type="password" name="password" id="user-password-{{ user.id }}">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn btn-primary-custom" form="form-edit-user-{{ user.id }}">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-
-
-    <div class="modal fade" id="modal-user">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('users.create') }}" id="form-user">
-                        <div class="mb-3">
-                            <label class="form-label" for="user-name">Nombre</label>
-                            <input class="form-control" type="text" name="name" id="user-name">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-email">Correo</label>
-                            <input class="form-control" type="email" name="email" id="user-email">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-rol">Rol</label>
-                            <select name="rol" class="form-select" id="user-rol">
-                                <option value="admin">Admin</option>
-                                <option value="encargado">Encargado</option>
-                                <option value="gerente">Gerente</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="user-password">Contraseña</label>
-                            <input class="form-control" type="password" name="password" id="user-password">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button data-bs-dismiss="modal" class="btn btn-secondary">Cancelar</button>
-                    <button class="btn btn-primary-custom" form="form-user">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 </div>
 
+<div class="modal fade" id="modal-user" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('users.create') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input class="form-control" type="text" name="name" required placeholder="Ej. Juan Pérez">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correo Electrónico</label>
+                        <input class="form-control" type="email" name="email" required placeholder="juan@farmacia.com">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Rol del Sistema</label>
+                            <select name="rol" class="form-select">
+                                <option value="admin">Administrador</option>
+                                <option value="gerente">Gerente</option>
+                                <option value="encargado">Encargado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input class="form-control" type="password" name="password" required placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-primary-custom px-4">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for user in users %}
+<div class="modal fade" id="modal-edit-{{ user.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('users.update', id = user.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input class="form-control" type="text" name="name" value="{{ user.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correo Electrónico</label>
+                        <input class="form-control" type="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cambiar Rol</label>
+                            <select name="rol" class="form-select">
+                                <option value="admin" {% if user.rol=='admin' %}selected{% endif %}>Admin</option>
+                                <option value="gerente" {% if user.rol=='gerente' %}selected{% endif %}>Gerente</option>
+                                <option value="encargado" {% if user.rol=='encargado' %}selected{% endif %}>Encargado
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input class="form-control" type="password" name="password"
+                                placeholder="Dejar en blanco para no cambiar">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-primary-custom px-4">Actualizar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}

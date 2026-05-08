@@ -2,64 +2,215 @@
 
 {% block contenido %}
 
-<div class="p-4">
-    <h4 class="text-white mb-4">Dashboard</h4>
-
-    <div class="row g-3 justify-content-center">
-
-        {% if current_user.rol in ['admin', 'gerente'] %}
-        <div class="col-md-4">
-            <a href="{{ url_for('users.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-people icon-sidebar"></i> Usuarios
-                </div>
-            </a>
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="section-title">Dashboard</h1>
+            <p class="section-sub">Bienvenido de vuelta, {{ current_user.name }}</p>
         </div>
-        {% endif %}
-
-        <div class="col-md-4">
-            <a href="{{ url_for('products.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-capsule icon-sidebar"></i> Productos
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ url_for('customers.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-person icon-sidebar"></i> Clientes
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ url_for('sales.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-cart icon-sidebar"></i> Ventas
-                </div>
-            </a>
-        </div>
-
-        {% if current_user.rol in ['admin', 'gerente'] %}
-        <div class="col-md-4">
-            <a href="{{ url_for('purchases.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-bag icon-sidebar"></i> Compras
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="{{ url_for('reports.index') }}" style="text-decoration: none;">
-                <div class="card p-3">
-                    <i class="bi bi-bar-chart icon-sidebar"></i> Reportes
-                </div>
-            </a>
-        </div>
-        {% endif %}
-
     </div>
 </div>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card p-3" style="border-left: 3px solid var(--accent);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p
+                        style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                        Ventas hoy</p>
+                    <h3 class="mono" style="font-size:24px; font-weight:600; color:var(--text-primary); margin:0;">$0.00
+                    </h3>
+                    <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">0 transacciones</p>
+                </div>
+                <div
+                    style="width:36px;height:36px;background:var(--accent-dim);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent);">
+                    <i class="bi bi-receipt" style="font-size:16px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3" style="border-left: 3px solid var(--info);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p
+                        style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                        Productos</p>
+                    <h3 class="mono" style="font-size:24px; font-weight:600; color:var(--text-primary); margin:0;">—
+                    </h3>
+                    <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">en inventario</p>
+                </div>
+                <div
+                    style="width:36px;height:36px;background:rgba(91,156,246,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--info);">
+                    <i class="bi bi-box-seam" style="font-size:16px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3" style="border-left: 3px solid var(--warning);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p
+                        style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                        Clientes</p>
+                    <h3 class="mono" style="font-size:24px; font-weight:600; color:var(--text-primary); margin:0;">—
+                    </h3>
+                    <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">registrados</p>
+                </div>
+                <div
+                    style="width:36px;height:36px;background:rgba(240,165,0,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--warning);">
+                    <i class="bi bi-people" style="font-size:16px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3" style="border-left: 3px solid var(--danger);">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p
+                        style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                        Stock bajo</p>
+                    <h3 class="mono" style="font-size:24px; font-weight:600; color:var(--text-primary); margin:0;">—
+                    </h3>
+                    <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">productos críticos</p>
+                </div>
+                <div
+                    style="width:36px;height:36px;background:rgba(255,94,94,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--danger);">
+                    <i class="bi bi-exclamation-triangle" style="font-size:16px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- QUICK ACCESS -->
+<div class="section-header" style="margin-top:8px;">
+    <h2 style="font-size:14px; font-weight:600; color:var(--text-secondary); letter-spacing:0.02em;">Acceso rápido</h2>
+</div>
+
+<div class="row g-3">
+
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('sales.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:var(--accent-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;">
+                        <i class="bi bi-receipt" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Ventas</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Nueva venta · historial</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('products.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:rgba(91,156,246,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--info);flex-shrink:0;">
+                        <i class="bi bi-box-seam" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Productos</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Inventario · catálogo</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('customers.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:rgba(240,165,0,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--warning);flex-shrink:0;">
+                        <i class="bi bi-people" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Clientes</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Gestión · puntos</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    {% if current_user.rol in ['admin', 'gerente'] %}
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('purchases.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:rgba(255,94,94,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--danger);flex-shrink:0;">
+                        <i class="bi bi-bag-check" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Compras</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Proveedores · órdenes</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('users.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:rgba(91,156,246,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--info);flex-shrink:0;">
+                        <i class="bi bi-person-gear" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Usuarios</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Roles · permisos</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4 col-lg-3">
+        <a href="{{ url_for('reports.index') }}" style="text-decoration:none;">
+            <div class="card p-3 quick-card" style="cursor:pointer; transition: all 0.15s;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div
+                        style="width:40px;height:40px;background:var(--accent-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;">
+                        <i class="bi bi-bar-chart-line" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:500;color:var(--text-primary);">Reportes</div>
+                        <div style="font-size:11.5px;color:var(--text-muted);">Estadísticas · exportar</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+    .quick-card:hover {
+        border-color: var(--accent) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+</style>
 
 {% endblock %}
