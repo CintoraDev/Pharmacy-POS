@@ -5,6 +5,11 @@ from flask_login import login_required
 from models import Product, db, Customer
 from datetime import datetime
 import uuid
+from flask_mail import Mail, Message
+from flask import current_app
+from weasyprint import HTML
+
+
 
 sales_bp = Blueprint('sales', __name__)
 
@@ -135,6 +140,23 @@ def createInvoice():
     
     db.session.add(new_invoice)
     db.session.commit()
+    
+    html_string = render_template('invoices/invoice_pdf.html', invoice=new_invoice)
+    pdf_bytes = HTML(string=html_string).write_pdf()
+    
+    msg = Message(
+    subject=f"Factura {new_invoice.folio} - Farmacia CUCEI",
+    recipients=[customer.email],
+    body=f"Estimado {customer.name}, adjunto encontrará su factura {new_invoice.folio}."
+)
+    msg.attach(
+        f"{new_invoice.folio}.pdf",
+        "application/pdf",
+        pdf_bytes
+    )
+    mail = Mail(current_app)
+    mail.send(msg)
+
     return jsonify({'success': True, 'message': 'Factura creada correctamente', 'invoice_id': new_invoice.id})
 
 
