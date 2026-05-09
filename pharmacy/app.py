@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager
 from config import Config
 from models import db, User
 from routes.auth import auth_bp
@@ -10,10 +10,12 @@ from routes.products import products_bp
 from routes.purchases import purchases_bp
 from routes.sales import sales_bp
 from routes.reports import reports_bp
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
