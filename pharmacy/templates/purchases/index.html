@@ -151,7 +151,7 @@
 
 <script>
     let cart = [];
-
+    let currentProvider = '';
     function addToCart() {
         const select = document.getElementById('products-select');
         const selectedOption = select.options[select.selectedIndex];
@@ -167,6 +167,7 @@
             return;
         }
 
+        currentProvider = document.getElementById('id_provider').value;
         const existing = cart.find(product => product.id === id);
 
         if (existing) {
@@ -243,5 +244,18 @@
             alert(data.message);
         }
     }
+
+    document.getElementById('id_provider').addEventListener('change', function () {
+        if (cart.length > 0) {
+            if (confirm('Cambiar de proveedor limpiará el carrito. ¿Continuar?')) {
+                cart = [];
+                currentProvider = ''
+                renderCart();
+            } else {
+                this.value = currentProvider;
+            }
+        }
+    });
+
 </script>
 {% endblock %}
