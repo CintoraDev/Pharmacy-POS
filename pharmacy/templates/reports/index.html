@@ -2,7 +2,6 @@
 
 {% block contenido %}
 <style>
-    /* Estilos para las pestañas alineados al sistema */
     .nav-tabs {
         border-bottom: 1px solid var(--border);
         gap: 8px;
@@ -23,6 +22,16 @@
         color: var(--accent);
         border-bottom: 2px solid var(--accent);
     }
+
+    .badge-folio {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        background: rgba(0, 212, 170, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(0, 212, 170, 0.2);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
 </style>
 
 <div class="section-header">
@@ -34,74 +43,67 @@
 
 <div class="card mb-4">
     <div class="card-body p-4">
-
-        <div class="d-flex gap-3 align-items-end mb-4">
-            <div style="flex: 1;">
-                <label class="form-label">FECHA INICIO</label>
-                <input type="date" class="form-control" name="start_date">
+        <form action="{{ url_for('reports.index') }}" method="GET">
+            <div class="row g-3 align-items-end mb-4">
+                <div class="col-md-4">
+                    <label class="form-label text-muted" style="font-size: 10px; letter-spacing: 1px;">FECHA
+                        INICIO</label>
+                    <input type="date" class="form-control" name="start_date"
+                        value="{{ request.args.get('start_date', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted" style="font-size: 10px; letter-spacing: 1px;">FECHA FIN</label>
+                    <input type="date" class="form-control" name="end_date"
+                        value="{{ request.args.get('end_date', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn-primary-custom w-100 py-2">
+                        <i class="bi bi-funnel me-1"></i> Filtrar Reporte
+                    </button>
+                </div>
             </div>
-            <div style="flex: 1;">
-                <label class="form-label">FECHA FIN</label>
-                <input type="date" class="form-control" name="end_date">
-            </div>
-            <div style="flex: 0.5;">
-                <button class="btn-primary-custom w-100 py-2">
-                    <i class="bi bi-search me-1"></i> Generar
-                </button>
-            </div>
-        </div>
+        </form>
 
         <ul class="nav nav-tabs" id="reportTabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#sales">
-                    <i class="bi bi-cart me-1"></i> Ventas
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#purchases">
-                    <i class="bi bi-bag me-1"></i> Compras
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#customers">
-                    <i class="bi bi-people me-1"></i> Clientes
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#invoices">
-                    <i class="bi bi-receipt me-1"></i> Facturas
-                </a>
-            </li>
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#sales"><i
+                        class="bi bi-cart me-1"></i> Ventas</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#purchases"><i
+                        class="bi bi-bag me-1"></i> Compras</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#customers"><i
+                        class="bi bi-people me-1"></i> Clientes</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#invoices"><i
+                        class="bi bi-receipt me-1"></i> Facturas</a></li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="sales">
                 <div class="table-wrapper">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
-                                <th>Medicamento</th>
+                                <th>Cajero</th>
                                 <th class="text-end">Total</th>
+                                <th class="text-end">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for sale in sales %}
                             <tr>
-                                <td class="mono">001</td>
-                                <td class="text-secondary">21/04/2026</td>
-                                <td>Carlos Cintora</td>
-                                <td>Paracetamol</td>
-                                <td class="mono text-end text-accent fw-bold">$168.00</td>
+                                <td class="mono">#{{ sale.id }}</td>
+                                <td class="text-secondary small">{{ sale.date.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ sale.customer.name }}</td>
+                                <td><span class="small">{{ sale.user.name }}</span></td>
+                                <td class="mono text-end text-accent fw-bold">${{ sale.total }}</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-primary-custom" data-bs-toggle="modal"
+                                        data-bs-target="#modal-sale-{{ sale.id }}"><i class="bi bi-eye"></i> Ver
+                                        Detalles</button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td class="mono">002</td>
-                                <td class="text-secondary">21/04/2026</td>
-                                <td>Alexis Gonzalez</td>
-                                <td>Ibuprofeno</td>
-                                <td class="mono text-end text-accent fw-bold">$52.50</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -109,61 +111,75 @@
 
             <div class="tab-pane fade" id="purchases">
                 <div class="table-wrapper">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Fecha</th>
                                 <th>Proveedor</th>
-                                <th>Fecha de Compra</th>
+                                <th>Usuario</th>
                                 <th class="text-end">Total</th>
+                                <th class="text-end">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for purchase in purchases %}
                             <tr>
-                                <td class="mono">C001</td>
-                                <td>Farmacias Guadalajara</td>
-                                <td class="text-secondary">10/04/2026</td>
-                                <td class="mono text-end fw-bold">$1,500.00</td>
+                                <td class="mono">#{{ purchase.id }}</td>
+                                <td class="text-secondary small">{{ purchase.date.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ purchase.provider.name }}</td>
+                                <td>{{ purchase.user.name }}</td>
+                                <td class="mono text-end fw-bold text-accent">${{ purchase.total }}</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-primary-custom" data-bs-toggle="modal"
+                                        data-bs-target="#modal-purchase-{{ purchase.id }}"><i class="bi bi-eye"></i>Ver
+                                        Detalles</button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td class="mono">C002</td>
-                                <td>Farmacia Similares</td>
-                                <td class="text-secondary">10/04/2026</td>
-                                <td class="mono text-end fw-bold">$1,500.00</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="tab-pane fade" id="customers">
-                <div class="table-wrapper">
-                    <table class="table table-hover">
+                <div class="row g-3 align-items-end mb-4">
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1">ESTADO</label>
+                        <select name="state" class="form-select" hx-get="{{ url_for('reports.filter_customers') }}"
+                            hx-target="#customers-tbody" hx-trigger="change">
+                            <option value="">Seleccionar estado</option>
+                            {% for state in states %}
+                            <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1">CIUDAD</label>
+                        <select name="city" class="form-select" hx-get="{{ url_for('reports.filter_customers') }}"
+                            hx-target="#customers-tbody" hx-trigger="change">
+                            <option value="">Seleccionar ciudad</option>
+                            {% for city in cities %}
+                            <option value="{{ city }}">{{ city }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
+                                <th>Cliente</th>
                                 <th>RFC</th>
-                                <th>F. Nacimiento</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Ubicación</th>
                                 <th class="text-end">Puntos</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Carlos Cintora</td>
-                                <td class="mono text-secondary">CIGC05061</td>
-                                <td>14/06/2005</td>
-                                <td class="text-end"><span class="status-badge"
-                                        style="background: var(--accent-dim); color: var(--accent); border-color: rgba(0,212,170,0.2);">90</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Alexis Gonzalez</td>
-                                <td class="mono text-secondary">ALGC05731</td>
-                                <td>08/09/1998</td>
-                                <td class="text-end"><span class="status-badge"
-                                        style="background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border);">5</span>
-                                </td>
-                            </tr>
+                        <tbody id="customers-tbody">
+                            {% include 'reports/_customers_rows.html' %}
                         </tbody>
                     </table>
                 </div>
@@ -171,30 +187,257 @@
 
             <div class="tab-pane fade" id="invoices">
                 <div class="table-wrapper">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Folio</th>
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>RFC</th>
+                                <th>Método</th>
                                 <th class="text-end">Total</th>
+                                <th class="text-end">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for invoice in invoices %}
                             <tr>
-                                <td class="mono text-info">F-0001</td>
-                                <td class="text-secondary">21/04/2026</td>
-                                <td>Carlos Cintora</td>
-                                <td class="mono">CIGC05061</td>
-                                <td class="mono text-end fw-bold text-primary">$168.00</td>
+                                <td class="mono text-info">{{ invoice.folio }}</td>
+                                <td class="text-secondary small">{{ invoice.emission_date.strftime('%d/%m/%Y
+                                    %H:%M')
+                                    }}
+                                </td>
+                                <td>{{ invoice.customer.name }}</td>
+                                <td class="mono">{{ invoice.customer.rfc }}</td>
+                                <td>{{ invoice.payment_method }}</td>
+                                <td class="mono text-end fw-bold text-accent">${{ invoice.total }}</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-primary-custom" data-bs-toggle="modal"
+                                        data-bs-target="#modal-invoice-{{ invoice.id }}"><i class="bi bi-eye"></i>Ver
+                                        Detalles</button>
+                                </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
+
+{% for sale in sales %}
+<div class="modal fade" id="modal-sale-{{ sale.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h5 class="modal-title mb-1">Detalle de Venta</h5><span class="badge badge-gerente">FOLIO
+                        #{{
+                        sale.id }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between mb-4 p-3 bg-elevated rounded-3 border border-subtle">
+                    <div><small class="text-muted d-block text-uppercase" style="font-size: 10px;">Fecha</small><span
+                            class="small">{{
+                            sale.date.strftime('%d/%m/%Y %H:%M') }}</span></div>
+                    <div class="text-end"><small class="text-muted d-block text-uppercase"
+                            style="font-size: 10px;">Cliente</small><span class="small">{{ sale.customer.name
+                            }}</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-muted fw-normal" style="font-size: 11px;">PRODUCTO</th>
+                                <th class="text-center text-muted fw-normal" style="font-size: 11px;">CANT.</th>
+                                <th class="text-end text-muted fw-normal" style="font-size: 11px;">SUBTOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in sale.details %}
+                            <tr>
+                                <td>
+                                    <div class="fw-medium" style="font-size: 13px;">{{ detail.product.name }}
+                                    </div>
+                                    <small class="text-muted" style="font-size: 11px;">${{ detail.unit_price }}
+                                        c/u</small>
+                                </td>
+                                <td class="text-center mono">{{ detail.quantity }}</td>
+                                <td class="text-end mono text-accent">${{ detail.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 pt-3 border-top border-subtle">
+                    <div class="d-flex justify-content-between mb-1 small"><span class="text-muted">Subtotal</span><span
+                            class="mono">${{ sale.subtotal }}</span>
+                    </div>
+                    {% if sale.discount > 0 %}<div class="d-flex justify-content-between mb-1 small"><span
+                            class="text-muted">Descuento</span><span class="mono text-danger">-${{ sale.discount
+                            }}</span></div>{% endif %}
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-subtle">
+                        <span class="fw-bold text-muted">TOTAL PAGADO</span>
+                        <span class="h4 mb-0 text-accent fw-bold mono">${{ sale.total }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-ghost w-100"
+                    data-bs-dismiss="modal">Cerrar</button></div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{# ══════════════════════════════════════════════════════════
+MODALES — COMPRAS (Actualizado: Detalle por Producto)
+══════════════════════════════════════════════════════════ #}
+{% for purchase in purchases %}
+<div class="modal fade" id="modal-purchase-{{ purchase.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h5 class="modal-title mb-1">Detalle de Compra</h5><span class="badge badge-gerente"
+                        style="background: rgba(52, 152, 219, 0.1); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.2);">ORDEN
+                        #{{ purchase.id }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between mb-4 p-3 bg-elevated rounded-3 border border-subtle">
+                    <div><small class="text-muted d-block text-uppercase" style="font-size: 10px;">Fecha</small><span
+                            class="small">{{
+                            purchase.date.strftime('%d/%m/%Y') }}</span></div>
+                    <div class="text-center"><small class="text-muted d-block text-uppercase"
+                            style="font-size: 10px;">Proveedor</small><span class="small fw-medium text-accent">{{
+                            purchase.provider.name }}</span></div>
+                    <div class="text-end"><small class="text-muted d-block text-uppercase"
+                            style="font-size: 10px;">Registró</small><span class="small">{{ purchase.user.name
+                            }}</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-muted fw-normal" style="font-size: 11px;">PRODUCTO</th>
+                                <th class="text-center text-muted fw-normal" style="font-size: 11px;">CANTIDAD
+                                </th>
+                                <th class="text-end text-muted fw-normal" style="font-size: 11px;">PRECIO
+                                    UNITARIO
+                                </th>
+                                <th>SUBTOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in purchase.details %}
+                            <tr>
+                                <td>
+                                    <div class="fw-medium" style="font-size: 13px;">{{ detail.product.name }}
+                                    </div>
+                                </td>
+                                <td class="text-center mono">{{ detail.quantity }}</td>
+                                <td class="text-end mono text-accent">${{ detail.unit_price }}</td>
+                                <td class="text-end mono text-accent">${{ detail.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 pt-3 border-top border-subtle d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-muted">INVERSIÓN TOTAL</span>
+                    <span class="h4 mb-0 text-accent fw-bold mono">${{ purchase.total }}</span>
+                </div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-ghost w-100"
+                    data-bs-dismiss="modal">Cerrar</button></div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for invoice in invoices %}
+<div class="modal fade" id="modal-invoice-{{ invoice.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h5 class="modal-title mb-1">Comprobante Fiscal Digital</h5><span class="badge-folio">FOLIO:
+                        {{
+                        invoice.folio }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-elevated rounded-3 border border-subtle h-100">
+                            <small class="text-muted text-uppercase d-block mb-1"
+                                style="font-size: 10px;">Receptor</small>
+                            <div class="fw-bold" style="font-size: 14px;">{{ invoice.customer.name }}</div>
+                            <div class="mono small text-accent">{{ invoice.customer.rfc }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div
+                            class="p-3 bg-elevated rounded-3 border border-subtle h-100 d-flex justify-content-between">
+                            <div><small class="text-muted d-block text-uppercase" style="font-size: 10px;">Fecha
+                                    Emisión</small><span class="small">{{
+                                    invoice.emission_date.strftime('%d/%m/%Y
+                                    %H:%M') }}</span></div>
+                            <div class="text-end"><small class="text-muted d-block text-uppercase"
+                                    style="font-size: 10px;">Método Pago</small><span class="small">{{
+                                    invoice.payment_method }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr class="border-bottom border-subtle">
+                                <th class="text-muted fw-normal" style="font-size: 11px;">PRODUCTO</th>
+                                <th class="text-center text-muted fw-normal" style="font-size: 11px;">CANT.</th>
+                                <th class="text-end text-muted fw-normal" style="font-size: 11px;">IMPORTE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if invoice.sale and invoice.sale.details %}
+                            {% for detail in invoice.sale.details %}
+                            <tr>
+                                <td>
+                                    <div class="fw-medium" style="font-size: 13px;">{{ detail.product.name }}
+                                    </div>
+                                </td>
+                                <td class="text-center mono">{{ detail.quantity }}</td>
+                                <td class="text-end mono text-accent">${{ detail.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 p-3 bg-elevated rounded-3 border border-subtle">
+                    <div class="d-flex justify-content-between mb-1 small"><span class="text-muted">Subtotal</span><span
+                            class="mono">${{ invoice.subtotal }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1 small"><span class="text-muted">IVA
+                            (16%)</span><span class="mono">${{ invoice.iva }}</span></div>
+                    <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-subtle">
+                        <span class="fw-bold">TOTAL FACTURADO</span>
+                        <span class="h4 mb-0 text-accent fw-bold mono">${{ invoice.total }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-ghost w-100"
+                    data-bs-dismiss="modal">Cerrar</button></div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 {% endblock %}

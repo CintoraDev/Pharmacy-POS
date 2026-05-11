@@ -1,0 +1,16 @@
+{% for customer in customers %}
+<tr>
+    <td>{{ customer.name }}</td>
+    <td class="mono text-secondary">{{ customer.rfc }}</td>
+    <td>{{ customer.email or '-' }}</td>
+    <td>{{customer.phone}}</td>
+    <td><small class="text-muted">{{ customer.city }}, {{ customer.state }}</small></td>
+    <td class="text-end"><span class="badge-folio">{{ customer.points }}</span></td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="5" class="text-center text-muted py-5">
+        No se encontraron clientes con esos filtros
+    </td>
+</tr>
+{% endfor %}

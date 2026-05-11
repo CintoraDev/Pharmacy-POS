@@ -11,3 +11,27 @@ def role_required(*roles):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+
+STATES = [
+    "Aguascalientes", "Baja California", "Baja California Sur",
+    "Campeche", "Chiapas", "Chihuahua", "Ciudad de México",
+    "Coahuila", "Colima", "Durango", "Guanajuato", "Guerrero",
+    "Hidalgo", "Jalisco", "Estado de México", "Michoacán",
+    "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla",
+    "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa",
+    "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz",
+    "Yucatán", "Zacatecas"
+]
+
+CITIES = [
+    "Aguascalientes", "Cancún", "Chihuahua", "Ciudad de México",
+    "Ciudad Juárez", "Culiacán", "Durango", "Ecatepec",
+    "Guadalajara", "Hermosillo", "León", "Mérida",
+    "Mexicali", "Monterrey", "Morelia", "Naucalpan",
+    "Nezahualcóyotl", "Oaxaca", "Puebla", "Querétaro",
+    "Saltillo", "San Luis Potosí", "Tijuana", "Tlajomulco",
+    "Tlalnepantla", "Toluca", "Torreón", "Veracruz",
+    "Villahermosa", "Zapopan"
+]
